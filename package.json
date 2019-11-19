@@ -1,0 +1,28 @@
+{
+  "name": "vscf-deadcode-detect",
+  "version": "0.0.1",
+  "description": "a repo to detect vue single file component dead code",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IWANABETHATGUY/vscf-deadcode-detect.git"
+  },
+  "author": "hxj <974153916@qq.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IWANABETHATGUY/vscf-deadcode-detect/issues"
+  },
+  "homepage": "https://github.com/IWANABETHATGUY/vscf-deadcode-detect#readme",
+  "dependencies": {
+    "@babel/traverse": "^7.7.2",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "devDependencies": {
+    "@types/babel-traverse": "^6.25.5",
+    "@types/babel__traverse": "^7.0.7",
+    "@types/node": "^12.12.9"
+  }
+}
