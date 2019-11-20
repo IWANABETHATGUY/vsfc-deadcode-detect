@@ -4,7 +4,8 @@
   "description": "a repo to detect vue single file component dead code",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
