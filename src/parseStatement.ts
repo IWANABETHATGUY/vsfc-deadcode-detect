@@ -7,19 +7,7 @@ import {
   isMemberExpression,
 } from '@babel/types';
 
-// const code = `!(item.number_won === 0 && item.success_clock_in === 1 && fuck); test(shit, $event)`;
-// const code1 = `[fuck.a, 'test']`;
 // const code2 = `({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
-// const code3 = `$emit('pageClick', {button: artist, artist_id: starId.test.test})`;
-// const code4 = '`/stars/${starId}?entry=${entry}&entrypage=${entrypage}`';
-// const code5 = `getThumbUrl($sget(star, 'avatar'), 60 * 60, 60 * 60)`;
-// const codeList = [code, code1, code2, code3, code4, code5];
-// for (let i = 0; i < codeList.length; i++) {
-//   console.time('traverse');
-//   console.log(getVariable(preProcessCode(codeList[i])));
-//   console.timeEnd('traverse');
-//   console.log('------------------------');
-// }
 export function getTemplateStatementVariable(code: string): string[] {
   return getVariable(preProcessCode(code));
 }
@@ -63,7 +51,9 @@ export function getVariable(ast: Node): string[] {
           if (
             isIdentifier(value) &&
             cur.type !== 'CallExpression' &&
-            cur.type !== 'ObjectProperty' && cur.type !== 'LogicalExpression'
+            cur.type !== 'ConditionalExpression' &&
+            cur.type !== 'ObjectProperty' &&
+            cur.type !== 'LogicalExpression'
           ) {
             break;
           }

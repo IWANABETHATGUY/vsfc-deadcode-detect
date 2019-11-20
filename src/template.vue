@@ -59,7 +59,7 @@
             ></span
           >
         </li>
-        <li v-show="loading" class="check-in-loading">
+        <li v-show="loading" class="check-in-loading" :class="[isActive ? activeClass : '', errorClass]">
           <img src="@/assets/images/checkIn/loading.png" alt="loading" />
           <span>努力加载中</span>
         </li>
