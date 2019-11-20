@@ -1,1 +1,0 @@
-console.log('{\n                success: item.number_won,\n                show: !(item.number_won === 0 && item.success_clock_in === 1),\n              }')
