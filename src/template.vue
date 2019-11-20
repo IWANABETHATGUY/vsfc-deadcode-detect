@@ -48,7 +48,7 @@
               class="earn"
               :class="     {
                 success: item.number_won,
-                show: !(item.number_won === 0 && item.success_clock_in === 1),
+                show: !(what.number_won === 0 && some.success_clock_in === 1),
               }"
               v-show="item.status !== '待打卡'"
               >{{

@@ -61,6 +61,17 @@ describe('extract variable from statement test', () => {
         `{a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && what)}`
       ).sort()
     ).toEqual(['item', 'what'].sort());
-  })
-  
+  });
+
+  test('LogicalExpression', () => {
+    expect(
+      getTemplateStatementVariable(`hasLoaded && !recordList.length`).sort()
+    ).toEqual(['hasLoaded', 'recordList'].sort());
+  });
+
+  test('BinaryExpression', () => {
+    expect(getTemplateStatementVariable(`item in recordList`).sort()).toEqual(
+      ['item', 'recordList'].sort()
+    );
+  });
 });

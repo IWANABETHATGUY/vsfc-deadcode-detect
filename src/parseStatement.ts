@@ -53,7 +53,8 @@ export function getVariable(ast: Node): string[] {
             cur.type !== 'CallExpression' &&
             cur.type !== 'ConditionalExpression' &&
             cur.type !== 'ObjectProperty' &&
-            cur.type !== 'LogicalExpression'
+            cur.type !== 'LogicalExpression' &&
+            cur.type !== 'BinaryExpression'
           ) {
             break;
           }
