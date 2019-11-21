@@ -74,4 +74,32 @@ describe('extract variable from statement test', () => {
       ['item', 'recordList'].sort()
     );
   });
+
+  test('CallExpression with TemplateLiteral argument', () => {
+    expect(
+      getTemplateStatementVariable("click(`/${uid}`,'info')").sort()
+    ).toEqual(['uid', 'click'].sort());
+  });
+
+  test('TemplateLiteral with expression is CallExpression', () => {
+    expect(
+      getTemplateStatementVariable(
+        "`/reviews/${$sget(item, 'cinecism_info', 'id')}?from=competition`"
+      ).sort()
+    ).toEqual(['$sget', 'item'].sort());
+  });
+
+  test('ObjectExpression with CallExpression as its value', () => {
+    expect(
+      getTemplateStatementVariable(
+        `{'is-current': checkIsSelect(item.identification, tag.value, index)}`
+      ).sort()
+    ).toEqual(['checkIsSelect', 'item', 'tag', 'index'].sort());
+  });
+
+  test('v-for with index argument', () => {
+    expect(
+      getTemplateStatementVariable(`(index, item) in list`).sort()
+    ).toEqual(['index', 'item', 'list'].sort());
+  });
 });
