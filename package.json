@@ -22,7 +22,6 @@
     "vue-template-compiler": "^2.6.10"
   },
   "devDependencies": {
-    "@types/babel-traverse": "^6.25.5",
     "@types/babel__traverse": "^7.0.7",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.9",
