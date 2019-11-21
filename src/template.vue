@@ -34,10 +34,11 @@
       <ul class="list" ref="list">
         <li
           class="item"
-          v-for="item in recordList"
+          v-for="(item, index) in recordList"
           :id="item.id"
           :class="{ waiting: item.status === '待打卡' }"
-        >
+        > 
+          <div v-for="(it, idx) in list"></div>
           <span class="date">{{ item.create_time }}</span>
           <span class="status">{{ item.status }}</span>
           <span class="point">{{

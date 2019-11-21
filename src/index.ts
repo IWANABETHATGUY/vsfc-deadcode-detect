@@ -6,10 +6,16 @@ import { getTemplateStatementVariable } from './parseStatement';
 const template = fs.readFileSync(path.resolve(__dirname, './template.vue'));
 const file = template.toString();
 const result = compile(file);
-
 const ret = traverseTemplateAst(result.ast, []);
 ret.forEach(attrMap => {
+  const scope = attrMap['__scope__'];
   Object.keys(attrMap).forEach(key => {
-    console.log(`${key}: ${attrMap[key]} ---> ${getTemplateStatementVariable(attrMap[key])}`)
-  })
-})
+    console.log(
+      `${key}: ${attrMap[key]} ---> ${getTemplateStatementVariable(
+        attrMap[key]
+      ).filter(item => {
+        return scope.indexOf(item) === -1;
+      })}`
+    );
+  });
+});

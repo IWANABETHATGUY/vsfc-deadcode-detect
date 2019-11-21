@@ -102,4 +102,10 @@ describe('extract variable from statement test', () => {
       getTemplateStatementVariable(`(index, item) in list`).sort()
     ).toEqual(['index', 'item', 'list'].sort());
   });
+
+  test('v-for with number literal', () => {
+    expect(getTemplateStatementVariable(`(item, index) in 4 `).sort()).toEqual(
+      ['item', 'index'].sort()
+    );
+  });
 });
