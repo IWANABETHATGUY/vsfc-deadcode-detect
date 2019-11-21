@@ -1,2 +1,2 @@
-*.js linguist-language=ts
-*.vue linguist-language=ts
+*.js linguist-language=typescript
+*.vue linguist-language=typescript
