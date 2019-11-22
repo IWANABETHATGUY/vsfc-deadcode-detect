@@ -44,3 +44,16 @@ export function parseProps(ast: ObjectExpression): Array<ObjectProperty> {
     }
   }, []);
 }
+
+export function parseMethods(ast: ObjectExpression): Array<ObjectMethod> {
+  return ast.properties.reduce((pre: Array<ObjectMethod>, property) => {
+    if (property.type === 'ObjectMethod') {
+      pre.push(property);
+      return pre;
+    }
+  }, []);
+}
+
+export function process(usedTokens: string[], ) {
+
+}

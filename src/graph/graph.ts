@@ -5,23 +5,24 @@ class Graph<T> {
     this.adj = new Map();
     this.visited = new Set();
   }
-  add(v: T, w: T) {
+  addEdge(v: T, w: T) {
+    this.addVertex(v)
+    this.adj.get(v).add(w);
+  }
+  addVertex(v: T) {
     if (!this.adj.has(v)) {
       this.adj.set(v, new Set());
     }
-    if (!this.adj.has(w)) {
-      this.adj.set(w, new Set());
-    }
-    this.adj.get(v).add(w);
   }
   validateVertex(v: T) {
     if (!this.adj.has(v)) {
       throw new Error("vertex isn't exist in this Graph");
     }
   }
-  public dfs(start: T, cb: Function) {
-    this.validateVertex(start);
-    this._dfs(start, cb);
+  public dfs(cb: Function) {
+    for (const node of this.adj.keys()) {
+      this._dfs(node, cb);
+    }
   }
   private _dfs(node: T, cb: Function) {
     this.visited.add(node);
