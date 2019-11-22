@@ -10,7 +10,7 @@ class Graph<T> {
       this.adj.set(v, new Set());
     }
     if (!this.adj.has(w)) {
-      this.adj.set(w, new Set())
+      this.adj.set(w, new Set());
     }
     this.adj.get(v).add(w);
   }
