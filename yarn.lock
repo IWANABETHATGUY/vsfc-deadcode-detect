@@ -363,6 +363,11 @@
   resolved "https://registry.npm.taobao.org/@types/stack-utils/download/@types/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha1-CoUdO9lkmPolwzq3J47TvWXwbD4=
 
+"@types/toposort@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.npm.taobao.org/@types/toposort/download/@types/toposort-2.0.3.tgz#dc490842b77c3e910c8d727ff0bdb2fb124cb41b"
+  integrity sha1-3EkIQrd8PpEMjXJ/8L2y+xJMtBs=
+
 "@types/typescript@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/@types/typescript/download/@types/typescript-2.0.0.tgz#c433539c98bae28682b307eaa7a0fd2115b83c28"

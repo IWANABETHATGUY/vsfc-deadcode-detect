@@ -1,10 +1,11 @@
-import traverse, { NodePath } from '@babel/traverse';
+import traverse, { NodePath, Node } from '@babel/traverse';
 import {
   ObjectMethod,
   isReturnStatement,
   ObjectExpression,
   isObjectExpression,
   ObjectProperty,
+  isIdentifier,
 } from '@babel/types';
 
 export function parseData(
@@ -54,6 +55,43 @@ export function parseMethods(ast: ObjectExpression): Array<ObjectMethod> {
   }, []);
 }
 
-export function process(usedTokens: string[], ) {
+function processData(
+  ast: ObjectMethod,
+  usedTokensSet: Set<string>,
+  usedNodeMap: Map<string, Node>,
+  unusedNodeMap: Map<string, Node>
+) {
+  const properties = parseData(ast);
+  for (let i = 0; i < properties.length; i++) {
+    const key = properties[i].key;
+    if (isIdentifier(key)) {
+      const name = key.name;
+      if (usedTokensSet.has(name)) {
+        usedNodeMap.set(name, properties[i]);
+      } else {
+        unusedNodeMap.set(name, properties[i]);
+      }
+    }
+  }
+}
 
+class ScriptProcessor {
+  private unusedNodeMap: Map<string, Node>;
+  private usedNodeMap: Map<string, Node>;
+  private usedTokenSet: Set<string>;
+  constructor(usedTokens: string[], sourceCode: string) {
+    this.usedNodeMap = new Map<string, Node>();
+    this.unusedNodeMap = new Map<string, Node>();
+    this.usedTokenSet = new Set<string>(usedTokens);
+  }
+  /**
+   *
+   *
+   * @export
+   * @param {string[]} usedToken  s 在template中使用的token列表
+   */
+
+  process(ast: ObjectExpression ) {
+    processData(dataAstNode);
+  }
 }

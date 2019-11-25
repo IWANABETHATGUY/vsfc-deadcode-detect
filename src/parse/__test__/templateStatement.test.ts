@@ -1,4 +1,4 @@
-import { getTemplateStatementVariable } from '../parse/templateStatement';
+import { getTemplateStatementVariable } from '../templateStatement';
 
 describe('extract variable from statement test', () => {
   test('statement with callexpression', () => {
