@@ -84,7 +84,6 @@ export function preProcess(script: string): ObjectExpression | null {
   }
   try {
     const ast = parse(content, {sourceType: "module"});
-    console.log(ast)
     let objectExpression: ObjectExpression;
     
     traverse(ast, {

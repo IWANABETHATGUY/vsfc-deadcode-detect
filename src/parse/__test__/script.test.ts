@@ -1,5 +1,4 @@
 import { preProcess } from '../script';
-// import { parse } from '@babel/parser';
 describe('测试解析script标签内容', () => {
   test('empty string should return null', () => {
     const code = '';
@@ -28,6 +27,7 @@ describe('测试解析script标签内容', () => {
     const ast = preProcess(code);
 
     expect(ast).not.toEqual(null);
+    expect(ast.type).toEqual('ObjectExpression');
   });
 
   test('single file component ', () => {
@@ -45,6 +45,7 @@ describe('测试解析script标签内容', () => {
     const ast = preProcess(code);
 
     expect(ast).not.toEqual(null);
+    expect(ast.type).toEqual('ObjectExpression');
   });
 });
 
