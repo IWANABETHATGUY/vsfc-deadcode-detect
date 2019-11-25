@@ -9,7 +9,7 @@
             <p class="label">累计投入（金币）</p>
           </div>
           <div class="earn-amount">
-            <p class="value">{{ statistic['earnAmount'] }}</p>
+            <p class="value">{{ statistic['earnAmount'] | filter }}</p>
             <p class="label">累计赚取（金币）</p>
           </div>
           <div class="successed-check-in">

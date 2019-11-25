@@ -7,7 +7,7 @@ import {
   isMemberExpression,
 } from '@babel/types';
 
-// const code2 = `({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
+// const code2 = ` ({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
 export function getTemplateStatementVariable(code: string): string[] {
   return getVariable(preProcessCode(code));
 }

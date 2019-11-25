@@ -49,4 +49,8 @@ describe('测试解析script标签内容', () => {
   });
 });
 
-describe('测试默认导出js部分与template 依赖关系', () => {});
+describe('测试默认导出js部分与template 依赖关系', () => {
+  describe('parseData', () => {
+  })
+  
+});
