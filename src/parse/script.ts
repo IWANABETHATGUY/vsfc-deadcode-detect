@@ -5,13 +5,12 @@ import {
   ObjectExpression,
   ObjectProperty,
   SpreadElement,
-  BlockStatement,
   isObjectExpression,
   isReturnStatement,
   isIdentifier,
   isObjectMethod,
   isObjectProperty,
-  isExportDefaultDeclaration
+  isExportDefaultDeclaration,
 } from '@babel/types';
 
 export function parseData(
@@ -69,6 +68,41 @@ export function parseMethods(
   );
 }
 
+/**
+ * 传入一个vue文件，或者一个js文件，返回默认导出的ObjectExpression ，如果发生错误或者没有默认导出返回null
+ *
+ * @export
+ * @param {string} script
+ * @returns {(ObjectExpression | null)}
+ */
+export function preProcess(script: string): ObjectExpression | null {
+  const regex = /\<script\>([\s\S]+)\<\/script\>/;
+  let content: string = script;
+  let ret: RegExpExecArray;
+  if ((ret = regex.exec(script))) {
+    content = ret[1];
+  }
+  try {
+    const ast = parse(content, {});
+    let objectExpression: ObjectExpression;
+    traverse(ast, {
+      ExportDefaultDeclaration(path: NodePath) {
+        const node = path.node;
+        if (
+          isExportDefaultDeclaration(node) &&
+          isObjectExpression(node.declaration)
+        ) {
+          objectExpression = node.declaration;
+          path.stop();
+        }
+      },
+    });
+    return objectExpression || null;
+  } catch (err) {
+    return null;
+  }
+}
+
 export class ScriptProcessor {
   private unusedNodeMap: Map<string, Node>;
   private usedNodeMap: Map<string, Node>;
@@ -87,30 +121,7 @@ export class ScriptProcessor {
    * @export
    * @param {string[]} usedToken  s 在template中使用的token列表
    */
-  preProcess(script: string): ObjectExpression | null {
-    const regex = /\<script\>([\s\S]+)\<\/script\>/;
-    let content: string = script;
-    let ret: RegExpExecArray;
-    if ((ret = regex.exec(script))) {
-      content = ret[1];
-    }
-    try {
-      const ast = parse(content, {});
-      let objectExpression: ObjectExpression;
-      traverse(ast, {
-        ExportDefaultDeclaration(path: NodePath) {
-          const node = path.node;
-          if (isExportDefaultDeclaration(node) && isObjectExpression(node.declaration)) {
-            objectExpression = node.declaration;
-            path.stop();
-          }
-        }
-      })
-      return objectExpression || null;
-    } catch (err) {
-      return null;
-    }
-  }
+
   process(ast: ObjectExpression) {
     ast.properties.forEach(property => {
       if (

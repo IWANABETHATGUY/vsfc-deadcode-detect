@@ -21,6 +21,7 @@ function preProcessCode(code: string): Node {
   ast = parser.parse(normalizeCode);
   return ast;
 }
+
 export function getVariable(ast: Node): string[] {
   const result: string[] = [];
   const nodeQueue: Node[] = [ast];
