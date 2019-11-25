@@ -83,8 +83,10 @@ export function preProcess(script: string): ObjectExpression | null {
     content = ret[1];
   }
   try {
-    const ast = parse(content, {});
+    const ast = parse(content, {sourceType: "module"});
+    console.log(ast)
     let objectExpression: ObjectExpression;
+    
     traverse(ast, {
       ExportDefaultDeclaration(path: NodePath) {
         const node = path.node;
