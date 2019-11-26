@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { traverseTemplateAst } from './util/traverse';
 import { getTemplateStatementVariable } from './parse/templateStatement';
-const template = fs.readFileSync(path.resolve(__dirname, './template.vue'));
+const template = fs.readFileSync(path.resolve(__dirname, './template.test.vue'));
 const file = template.toString();
 const result = compile(file);
 const ret = traverseTemplateAst(result.ast, []);

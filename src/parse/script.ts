@@ -115,6 +115,8 @@ export class ScriptProcessor {
     this.unusedNodeMap = new Map<string, Node>();
     this.usedTokenSet = new Set<string>(usedTokens);
     this.unFoundNodeMap = new Map<string, Set<Node>>();
+    const ast = preProcess(sourceCode);
+    this.process(ast);
   }
   /**
    *
@@ -155,6 +157,7 @@ export class ScriptProcessor {
         }
       }
     });
+
   }
 
   processMethods(ast: ObjectProperty) {

@@ -1,4 +1,7 @@
 import { preProcess } from '../script';
+import * as fs from 'fs';
+import * as path from 'path';
+
 describe('测试解析script标签内容', () => {
   test('empty string should return null', () => {
     const code = '';
@@ -30,27 +33,40 @@ describe('测试解析script标签内容', () => {
     expect(ast.type).toEqual('ObjectExpression');
   });
 
-  test('single file component ', () => {
-    const code = `
-      <template>
-        
-      </template>
+  describe('single file component', () => {
+    test('empty single file component ', () => {
+      const code = `
+        <template>
+          
+        </template>
+  
+        <script>
+          export default {
+  
+          }
+        </script>
+  `;
+      const ast = preProcess(code);
 
-      <script>
-        export default {
+      expect(ast).not.toEqual(null);
+      expect(ast.type).toEqual('ObjectExpression');
+    });
 
-        }
-      </script>
-`;
-    const ast = preProcess(code);
+    test('single file component', () => {
+      const template = fs.readFileSync(
+        path.resolve(__dirname, './script.test.vue')
+      );
+      const file = template.toString();
 
-    expect(ast).not.toEqual(null);
-    expect(ast.type).toEqual('ObjectExpression');
+      const ast = preProcess(file);
+
+      expect(ast).not.toEqual(null);
+      expect(ast.type).toEqual('ObjectExpression');
+      expect(ast.properties.length).toEqual(6);
+    });
   });
 });
 
 describe('测试默认导出js部分与template 依赖关系', () => {
-  describe('parseData', () => {
-  })
-  
+  describe('parseData', () => {});
 });
