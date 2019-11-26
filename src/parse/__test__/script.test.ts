@@ -1,6 +1,8 @@
-import { preProcess } from '../script';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ObjectMethod, Identifier } from '@babel/types';
+import { getObjectProperty } from '../../util/testUtil';
+import { preProcess, parseData } from '../script';
 
 describe('测试解析script标签内容', () => {
   test('empty string should return null', () => {
@@ -68,5 +70,26 @@ describe('测试解析script标签内容', () => {
 });
 
 describe('测试默认导出js部分与template 依赖关系', () => {
-  describe('parseData', () => {});
+  const file = fs.readFileSync(path.resolve(__dirname, './script.test.vue'));
+  const template = file.toString();
+  const ast = preProcess(template);
+
+  describe('parseData', () => {
+    const dataMethod = getObjectProperty(ast, 'data');
+    expect(dataMethod).not.toBe(null);
+    expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
+    const list = parseData(dataMethod as ObjectMethod);
+    const nameList = list.map(item => (<Identifier>item.key).name);
+    expect(list.length).toEqual(6);
+    expect(nameList.sort()).toEqual(
+      [
+        'recordList',
+        'hasLoaded',
+        'page',
+        'statistic',
+        'hasMore',
+        'loading',
+      ].sort()
+    );
+  });
 });

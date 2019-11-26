@@ -22,9 +22,11 @@ export function parseData(
       const node = path.node;
       if (isReturnStatement(node) && isObjectExpression(node.argument)) {
         objectExpression = node.argument;
+        path.stop();
       }
     },
-  });
+    noScope: true
+  }, );
   if (isObjectExpression(objectExpression)) {
     return objectExpression.properties.reduce(
       (pre: Array<ObjectMethod | ObjectProperty>, property) => {
