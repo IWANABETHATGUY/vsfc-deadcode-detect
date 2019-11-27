@@ -23,4 +23,18 @@ describe('测试模板提取变量', () => {
       ].sort()
     );
   });
+
+  test('sfc with component import', () => {
+    const template = fs.readFileSync(
+      path.resolve(__dirname, './templateWithComponent.test.vue')
+    );
+    const file = template.toString();
+    expect(parseTemplate(file).sort()).toEqual(
+      [
+        'recommendMovies',
+        'movieLink',
+        'reportFilm',
+      ].sort()
+    );
+  });
 });

@@ -12,3 +12,10 @@ console.time('parseScript')
 const sp = new ScriptProcessor(tokenList, file);
 console.log(sp.getUnusedNodeDesc());
 console.timeEnd('parseScript')
+
+const tokenSet = new Set(tokenList);
+for (let item of sp.getUnusedNodeDesc()) {
+  if (tokenSet.has(item.name)){
+    console.log(item.name);
+  }
+}

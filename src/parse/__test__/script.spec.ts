@@ -76,6 +76,7 @@ describe('测试默认导出js部分与template 依赖关系', () => {
 
   describe('parseData', () => {
     const dataMethod = getObjectProperty(ast, 'data');
+
     expect(dataMethod).not.toBe(null);
     expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
     const list = parseData(dataMethod as ObjectMethod);

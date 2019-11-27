@@ -79,6 +79,23 @@ export function parseMethods(
   );
 }
 
+export function parseWatch(
+  ast: ObjectExpression
+): Array<ObjectMethod | ObjectProperty> {
+  return ast.properties.reduce(
+    (pre: Array<ObjectMethod | ObjectProperty>, property) => {
+      if (
+        property.type === 'ObjectMethod' ||
+        property.type === 'ObjectProperty'
+      ) {
+        pre.push(property);
+      }
+      return pre;
+    },
+    []
+  );
+}
+
 /**
  * 传入一个vue文件，或者一个js文件，返回默认导出的ObjectExpression ，如果发生错误或者没有默认导出返回null
  *
@@ -134,11 +151,11 @@ export class ScriptProcessor {
     return this.unusedNodeMap;
   }
 
-  getUnusedNodeDesc() : INodeDescription[]{
+  getUnusedNodeDesc(): INodeDescription[] {
     const descriptionList: INodeDescription[] = [];
     this.unusedNodeMap.forEach((node, key) => {
-      descriptionList.push({start: node.start, end: node.end, name: key});
-    })
+      descriptionList.push({ start: node.start, end: node.end, name: key });
+    });
     return descriptionList;
   }
   /**
@@ -169,6 +186,11 @@ export class ScriptProcessor {
           case 'computed':
             if (isObjectProperty(property)) {
               this.processMethods(property);
+            }
+            break;
+          case 'watch':
+            if (isObjectProperty(property)) {
+              this.processWatch(property);
             }
             break;
           default:
@@ -208,6 +230,26 @@ export class ScriptProcessor {
       });
     } while (flag);
   }
+
+  processWatch(property: ObjectProperty) {
+    if (isObjectExpression(property.value)) {
+      const list = parseWatch(property.value);
+      for (let i = 0; i < list.length; i++) {
+        const item = list[i];
+        if (isObjectMethod(item)) {
+          this.processEffectMethod(item);
+        } else if (isObjectExpression(item.value)) {
+          for (const prop of item.value.properties) {
+            if (isObjectMethod(prop) && prop.key.name === 'handler') {
+              this.processEffectMethod(prop);
+              break;
+            }
+          } 
+        }
+      }
+    }
+  }
+
   processEffectMethod(property: ObjectMethod) {
     traverse(property, {
       ThisExpression: (path: NodePath) => {
