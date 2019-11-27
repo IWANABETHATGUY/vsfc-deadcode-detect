@@ -98,6 +98,12 @@ export default {
   methods: {
     stat(event, extdata) {
     },
+    test() {
+      this.test2();
+    },
+    test2() {
+
+    },
     async loadData() {
       try {
         const time = this.currentDate;

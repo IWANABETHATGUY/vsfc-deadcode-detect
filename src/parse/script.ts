@@ -5,13 +5,22 @@ import {
   ObjectExpression,
   ObjectProperty,
   SpreadElement,
+  Identifier,
   isObjectExpression,
   isReturnStatement,
   isIdentifier,
   isObjectMethod,
   isObjectProperty,
   isExportDefaultDeclaration,
+  isMemberExpression,
 } from '@babel/types';
+import { isLifeCircleFunction } from '../util/parse';
+
+interface INodeDescription {
+  name: string;
+  start: number;
+  end: number;
+}
 
 export function parseData(
   ast: ObjectMethod
@@ -25,8 +34,8 @@ export function parseData(
         path.stop();
       }
     },
-    noScope: true
-  }, );
+    noScope: true,
+  });
   if (isObjectExpression(objectExpression)) {
     return objectExpression.properties.reduce(
       (pre: Array<ObjectMethod | ObjectProperty>, property) => {
@@ -85,9 +94,9 @@ export function preProcess(script: string): ObjectExpression | null {
     content = ret[1];
   }
   try {
-    const ast = parse(content, {sourceType: "module"});
+    const ast = parse(content, { sourceType: 'module' });
     let objectExpression: ObjectExpression;
-    
+
     traverse(ast, {
       ExportDefaultDeclaration(path: NodePath) {
         const node = path.node;
@@ -109,16 +118,28 @@ export function preProcess(script: string): ObjectExpression | null {
 export class ScriptProcessor {
   private unusedNodeMap: Map<string, Node>;
   private usedNodeMap: Map<string, Node>;
-  private unFoundNodeMap: Map<string, Set<Node>>;
+  private unFoundNodeMap: Map<string, Set<string>>;
   private usedTokenSet: Set<string>;
 
   constructor(usedTokens: string[], sourceCode: string) {
     this.usedNodeMap = new Map<string, Node>();
     this.unusedNodeMap = new Map<string, Node>();
     this.usedTokenSet = new Set<string>(usedTokens);
-    this.unFoundNodeMap = new Map<string, Set<Node>>();
+    this.unFoundNodeMap = new Map<string, Set<string>>();
     const ast = preProcess(sourceCode);
     this.process(ast);
+  }
+
+  getUnusedNodeMap() {
+    return this.unusedNodeMap;
+  }
+
+  getUnusedNodeDesc() : INodeDescription[]{
+    const descriptionList: INodeDescription[] = [];
+    this.unusedNodeMap.forEach((node, key) => {
+      descriptionList.push({start: node.start, end: node.end, name: key});
+    })
+    return descriptionList;
   }
   /**
    *
@@ -145,21 +166,62 @@ export class ScriptProcessor {
             }
             break;
           case 'methods':
-            if (isObjectProperty(property)) {
-              this.processMethods(property);
-            }
-            break;
           case 'computed':
             if (isObjectProperty(property)) {
               this.processMethods(property);
             }
             break;
           default:
+            if (isLifeCircleFunction(property.key.name)) {
+              if (isObjectMethod(property)) {
+                this.processEffectMethod(property);
+              }
+            }
             break;
         }
       }
     });
-
+    let flag: boolean;
+    do {
+      flag = false;
+      this.unFoundNodeMap.forEach((set, key) => {
+        if (this.unusedNodeMap.has(key)) {
+          if (!set) {
+            const unusedNode = this.unusedNodeMap.get(key);
+            this.unusedNodeMap.delete(key);
+            this.unFoundNodeMap.delete(key);
+            this.usedNodeMap.set(key, unusedNode);
+            flag = true;
+          } else {
+            for (let nodeName of set) {
+              if (this.usedNodeMap.has(nodeName)) {
+                const unusedNode = this.unusedNodeMap.get(key);
+                this.unusedNodeMap.delete(key);
+                this.unFoundNodeMap.delete(key);
+                this.usedNodeMap.set(key, unusedNode);
+                flag = true;
+                break;
+              }
+            }
+          }
+        }
+      });
+    } while (flag);
+  }
+  processEffectMethod(property: ObjectMethod) {
+    traverse(property, {
+      ThisExpression: (path: NodePath) => {
+        const parent = path.parent;
+        if (!isMemberExpression(parent)) {
+          return;
+        }
+        const node = parent.property;
+        if (isIdentifier(node)) {
+          this.unFoundNodeMap.set(node.name, null);
+        }
+      },
+      noScope: true,
+    });
   }
 
   processMethods(ast: ObjectProperty) {
@@ -194,17 +256,30 @@ export class ScriptProcessor {
   markObjectMethodIdentifier(ast: ObjectMethod, used: boolean) {
     traverse(ast.body, {
       ThisExpression: (path: NodePath) => {
-        const node = path.node;
+        const parent = path.parent;
+        if (!isMemberExpression(parent)) {
+          return;
+        }
+        const node = parent.property;
         if (isIdentifier(node)) {
           if (used && this.unusedNodeMap.has(node.name)) {
             const unusedNode = this.unusedNodeMap.get(node.name);
             this.unusedNodeMap.delete(node.name);
             this.usedNodeMap.set(node.name, unusedNode);
           } else {
-            this.unFoundNodeMap.set(node.name, new Set([ast]));
+            if (this.unFoundNodeMap.has(node.name)) {
+              const set = this.unFoundNodeMap.get(node.name);
+              set.add(node.name);
+            } else {
+              this.unFoundNodeMap.set(
+                node.name,
+                new Set([(<Identifier>ast.key).name])
+              );
+            }
           }
         }
       },
+      noScope: true,
     });
   }
 
