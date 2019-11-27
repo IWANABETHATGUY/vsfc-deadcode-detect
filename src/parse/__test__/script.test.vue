@@ -60,11 +60,11 @@
           >
         </li>
         <li v-show="loading" class="check-loading" :class="[isActive ? activeClass : '', errorClass]">
-          <span>.....</span>
+          <span>{{fuck}}</span>
         </li>
       </ul>
     </div>
-    <div v-if="hasLoaded && !recordList.length" class="placeholder">
+    <div v-if="hasLoaded && !recordList.length" class="placeholder" @click="test2">
       <img
         alt="placeholder"
       />
@@ -83,6 +83,9 @@ export default {
     uid() {
       return User.getUserInfo('id');
     },
+    fuck() {
+      return this.test
+    }
   },
   data() {
     return {

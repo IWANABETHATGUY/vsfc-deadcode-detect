@@ -3,6 +3,9 @@ export function traverseTemplateAst(
   node: ASTElement | any,
   scope: string[]
 ): Array<{ [prop: string]: any }> {
+  if (!node) {
+    return [];
+  }
   let result: Array<{}> = [];
   let children = node.children;
 
@@ -27,7 +30,13 @@ export function traverseTemplateAst(
     });
     result.push(attrsMap);
   } else if (node.type === 2) {
-    const attrsMap = { __text__: node.text.trim().slice(2, -2) };
+    const attrsMap = { };
+    const regex = /{{([^{}]+)}}/g
+    let match: RegExpExecArray;
+    let index = 1;
+    while (match = regex.exec(node.text)) {
+      attrsMap[`__text__${index}`] = match[1];
+    }
     Object.defineProperty(attrsMap, '__scope__', {
       enumerable: false,
       value: [...scope],

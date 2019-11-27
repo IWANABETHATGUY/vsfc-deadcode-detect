@@ -72,8 +72,8 @@ export function parseMethods(
         property.type === 'SpreadElement'
       ) {
         pre.push(property);
-        return pre;
       }
+      return pre;
     },
     []
   );
@@ -269,7 +269,9 @@ export class ScriptProcessor {
           } else {
             if (this.unFoundNodeMap.has(node.name)) {
               const set = this.unFoundNodeMap.get(node.name);
-              set.add(node.name);
+              if (set) {
+                set.add(node.name);
+              }
             } else {
               this.unFoundNodeMap.set(
                 node.name,
