@@ -60,7 +60,7 @@
           >
         </li>
         <li v-show="loading" class="check-loading" :class="[isActive ? activeClass : '', errorClass]">
-          <span>{{fuck}}</span>
+          <span></span>
         </li>
       </ul>
     </div>
@@ -83,7 +83,7 @@ export default {
     uid() {
       return User.getUserInfo('id');
     },
-    fuck() {
+    returnTest() {
       return this.test
     }
   },
@@ -96,6 +96,7 @@ export default {
       },
       hasMore: true,
       loading: false,
+      thatis: false
     };
   },
   methods: {
