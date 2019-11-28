@@ -34,6 +34,7 @@ describe('测试模板提取变量', () => {
         'recommendMovies',
         'movieLink',
         'reportFilm',
+        'showAllMedia'
       ].sort()
     );
   });

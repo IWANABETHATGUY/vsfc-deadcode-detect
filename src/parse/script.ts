@@ -13,6 +13,7 @@ import {
   isObjectProperty,
   isExportDefaultDeclaration,
   isMemberExpression,
+  isSpreadElement,
 } from '@babel/types';
 import { isLifeCircleFunction } from '../util/parse';
 
@@ -64,15 +65,10 @@ export function parseProps(ast: ObjectExpression): Array<ObjectProperty> {
 
 export function parseMethods(
   ast: ObjectExpression
-): Array<ObjectMethod | SpreadElement> {
+): Array<ObjectMethod | SpreadElement | ObjectProperty> {
   return ast.properties.reduce(
-    (pre: Array<ObjectMethod | SpreadElement>, property) => {
-      if (
-        property.type === 'ObjectMethod' ||
-        property.type === 'SpreadElement'
-      ) {
-        pre.push(property);
-      }
+    (pre: Array<ObjectMethod | SpreadElement | ObjectProperty>, property) => {
+      pre.push(property);
       return pre;
     },
     []
@@ -203,6 +199,7 @@ export class ScriptProcessor {
         }
       }
     });
+    debugger;
     let flag: boolean;
     do {
       flag = false;
@@ -244,7 +241,7 @@ export class ScriptProcessor {
               this.processEffectMethod(prop);
               break;
             }
-          } 
+          }
         }
       }
     }
@@ -272,7 +269,7 @@ export class ScriptProcessor {
     }
     const properties = parseMethods(ast.value);
     properties.forEach(property => {
-      if (isObjectMethod(property)) {
+      if (!isSpreadElement(property)) {
         let used = false;
         if (isIdentifier(property.key)) {
           if (this.usedTokenSet.has(property.key.name)) {
@@ -295,8 +292,8 @@ export class ScriptProcessor {
     });
   }
 
-  markObjectMethodIdentifier(ast: ObjectMethod, used: boolean) {
-    traverse(ast.body, {
+  markObjectMethodIdentifier(ast: ObjectProperty | ObjectMethod, used: boolean) {
+    traverse(ast, {
       ThisExpression: (path: NodePath) => {
         const parent = path.parent;
         if (!isMemberExpression(parent)) {

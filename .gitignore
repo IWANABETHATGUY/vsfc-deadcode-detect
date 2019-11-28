@@ -63,3 +63,6 @@ typings/
 out
 
 **/template.test/*.vue
+
+
+*.txt

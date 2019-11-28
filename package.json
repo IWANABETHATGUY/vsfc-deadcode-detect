@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "cp": "cp ./src/parse/__test__/*.vue ./out/parse/__test__ "
+    "cp": "cp ./src/parse/__test__/*.vue ./out/parse/__test__ && cp -R ./src/template.test ./out/"
   },
   "repository": {
     "type": "git",
