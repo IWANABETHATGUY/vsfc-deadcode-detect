@@ -50,6 +50,14 @@ export function traverseTemplateAst(
       result = result.concat(traverseTemplateAst(children[i], [...scope]));
     }
   }
+  if (node.ifConditions) {
+    const ifConditions = node.ifConditions;
+    for (let condition of ifConditions) {
+      if (node !== condition.block) {
+        result = result.concat(traverseTemplateAst(condition.block, [...scope]));
+      }
+    }
+  }
   if (node.alias) {
     scope.pop();
   }
