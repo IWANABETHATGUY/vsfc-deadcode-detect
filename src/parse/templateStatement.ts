@@ -32,7 +32,7 @@ export function getVariable(ast: Node): string[] {
     if (cur.type === 'Identifier') {
       if (
         (isObjectProperty(parent) && parent.key === cur) ||
-        (isMemberExpression(parent) && cur === parent.property)
+        (isMemberExpression(parent) && cur === parent.property && !parent.computed)
       ) {
         continue;
       }
@@ -56,7 +56,11 @@ export function getVariable(ast: Node): string[] {
             cur.type !== 'ObjectProperty' &&
             cur.type !== 'LogicalExpression' &&
             cur.type !== 'BinaryExpression'
+            
           ) {
+            if(isMemberExpression(cur) && cur.computed) {
+              continue;
+            }
             break;
           }
         }

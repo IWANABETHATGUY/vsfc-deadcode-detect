@@ -101,6 +101,10 @@ describe('extract variable from statement test', () => {
     expect(
       getTemplateStatementVariable(`(index, item) in list`).sort()
     ).toEqual(['index', 'item', 'list'].sort());
+
+    expect(
+      getTemplateStatementVariable(`(item, index) in judges[judgeTab]`).sort()
+    ).toEqual(['judges', 'judgeTab', 'index', 'item'].sort());
   });
 
   test('v-for with number literal', () => {
