@@ -1,20 +1,24 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { parseTemplate } from './parse/template';
 import { ScriptProcessor } from './parse/script';
-const template = fs.readFileSync(path.resolve(__dirname, './template.test/large.test.vue'));
-const file = template.toString();
-console.time('template');
-const tokenList = parseTemplate(file);
-console.timeEnd('template');
 
+export {
+  parseData,
+  ScriptProcessor,
+  parseMethods,
+  parseProps,
+  parseWatch,
+  preProcess,
+} from './parse/script';
 
-const sp = new ScriptProcessor(tokenList, file);
-console.log(sp.getUnusedNodeDesc());
+export { parseTemplate } from './parse/template';
 
-// const tokenSet = new Set(previousTokenList);
-// for (let item of tokenList) {
-//   if (!tokenSet.has(item)){
-//     console.log(item);
-//   }
-// }
+export {
+  getTemplateStatementVariable,
+  getVariable,
+} from './parse/templateStatement';
+
+export default function unusedToken(sourcode: string) {
+  const tokenList = parseTemplate(sourcode);
+  const sp = new ScriptProcessor(tokenList, sourcode);
+  return sp.getUnusedNodeDesc();
+}

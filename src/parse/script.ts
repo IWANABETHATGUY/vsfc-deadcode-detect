@@ -6,6 +6,8 @@ import {
   ObjectProperty,
   SpreadElement,
   Identifier,
+  ArrayExpression,
+  StringLiteral,
   isObjectExpression,
   isReturnStatement,
   isIdentifier,
@@ -14,6 +16,8 @@ import {
   isExportDefaultDeclaration,
   isMemberExpression,
   isSpreadElement,
+  isArrayExpression,
+  isStringLiteral,
 } from '@babel/types';
 import { isLifeCircleFunction } from '../util/parse';
 
@@ -131,7 +135,10 @@ export function preProcess(script: string): [ObjectExpression | null, number] {
 }
 
 export class ScriptProcessor {
-  private unusedNodeMap: Map<string, ObjectProperty | ObjectMethod>;
+  private unusedNodeMap: Map<
+    string,
+    ObjectProperty | ObjectMethod | StringLiteral
+  >;
   private usedNodeMap: Map<string, Node>;
   private unFoundNodeMap: Map<string, Set<string>>;
   private usedTokenSet: Set<string>;
@@ -139,7 +146,10 @@ export class ScriptProcessor {
 
   constructor(usedTokens: string[], sourceCode: string) {
     this.usedNodeMap = new Map<string, Node>();
-    this.unusedNodeMap = new Map<string, ObjectProperty | ObjectMethod>();
+    this.unusedNodeMap = new Map<
+      string,
+      ObjectProperty | ObjectMethod | StringLiteral
+    >();
     this.usedTokenSet = new Set<string>(usedTokens);
     this.unFoundNodeMap = new Map<string, Set<string>>();
     const [ast, offset] = preProcess(sourceCode);
@@ -337,11 +347,12 @@ export class ScriptProcessor {
   }
 
   processProps(ast: ObjectProperty) {
-    if (!isObjectExpression(ast.value)) {
-      return;
+    if (isObjectExpression(ast.value)) {
+      const properties = parseProps(ast.value);
+      this.markIdentifiers(properties);
+    } else if (isArrayExpression(ast.value)) {
+      this.markArrayExpression(ast.value);
     }
-    const properties = parseProps(ast.value);
-    this.markIdentifiers(properties);
   }
 
   processData(ast: ObjectMethod) {
@@ -349,21 +360,34 @@ export class ScriptProcessor {
     this.markIdentifiers(properties, true);
   }
 
+  markArrayExpression(array: ArrayExpression) {
+    array.elements.forEach(item => {
+      if (isStringLiteral(item)) {
+        if (this.usedTokenSet.has(item.value)) {
+          this.usedNodeMap.set(item.value, item);
+        } else {
+          this.unusedNodeMap.set(item.value, item);
+        }
+      }
+    });
+  }
+
   markIdentifiers(
     properties: (ObjectMethod | ObjectProperty)[],
     needTraverse = false
   ) {
     for (let i = 0; i < properties.length; i++) {
-      const key = properties[i].key;
+      const property = properties[i];
+      const key = property.key;
       if (isIdentifier(key)) {
         const name = key.name;
         if (this.usedTokenSet.has(name)) {
-          this.usedNodeMap.set(name, properties[i]);
+          this.usedNodeMap.set(name, property);
         } else {
-          this.unusedNodeMap.set(name, properties[i]);
+          this.unusedNodeMap.set(name, property);
         }
         if (needTraverse) {
-          this.markObjectMethodIdentifier(properties[i], false);
+          this.markObjectMethodIdentifier(property, false);
         }
       }
     }

@@ -1,3 +1,4 @@
+
 import {
   ObjectProperty,
   ObjectExpression,
@@ -20,4 +21,8 @@ export function getObjectProperty(
     }
   }
   return null;
+}
+
+export function isTwoSortedArrayEqual(a: any[], b: any[]): void {
+  expect(a.sort()).toEqual(b.sort());
 }
