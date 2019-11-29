@@ -333,10 +333,10 @@ export class ScriptProcessor {
 
   processData(ast: ObjectMethod) {
     const properties = parseData(ast);
-    this.markIdentifiers(properties);
+    this.markIdentifiers(properties, true);
   }
 
-  markIdentifiers(properties: (ObjectMethod | ObjectProperty)[]) {
+  markIdentifiers(properties: (ObjectMethod | ObjectProperty)[], needTraverse = false) {
     for (let i = 0; i < properties.length; i++) {
       const key = properties[i].key;
       if (isIdentifier(key)) {
@@ -345,6 +345,9 @@ export class ScriptProcessor {
           this.usedNodeMap.set(name, properties[i]);
         } else {
           this.unusedNodeMap.set(name, properties[i]);
+        }
+        if (needTraverse) {
+          this.markObjectMethodIdentifier(properties[i], false);
         }
       }
     }
