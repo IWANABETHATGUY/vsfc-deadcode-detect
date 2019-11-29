@@ -8,19 +8,19 @@ import { parseTemplate } from '../template';
 describe('测试解析script标签内容', () => {
   test('empty string should return null', () => {
     const code = '';
-    const ast = preProcess(code);
+    const [ast] = preProcess(code);
     expect(ast).toBe(null);
   });
 
   test('illegal js file should return null', () => {
     const code = 'whatever?';
-    const ast = preProcess(code);
+    const [ast] = preProcess(code);
     expect(ast).toBe(null);
   });
 
   test('legaljs without ExportDefaultExpression ', () => {
     const code = 'let a = 3';
-    const ast = preProcess(code);
+    const [ast] = preProcess(code);
     expect(ast).toBe(null);
   });
 
@@ -30,7 +30,7 @@ describe('测试解析script标签内容', () => {
 
     }
 `;
-    const ast = preProcess(code);
+    const [ast] = preProcess(code);
 
     expect(ast).not.toEqual(null);
     expect(ast.type).toEqual('ObjectExpression');
@@ -49,7 +49,7 @@ describe('测试解析script标签内容', () => {
           }
         </script>
   `;
-      const ast = preProcess(code);
+      const [ast] = preProcess(code);
 
       expect(ast).not.toEqual(null);
       expect(ast.type).toEqual('ObjectExpression');
@@ -61,7 +61,7 @@ describe('测试解析script标签内容', () => {
       );
       const file = template.toString();
 
-      const ast = preProcess(file);
+      const [ast,] = preProcess(file);
 
       expect(ast).not.toEqual(null);
       expect(ast.type).toEqual('ObjectExpression');
@@ -73,7 +73,7 @@ describe('测试解析script标签内容', () => {
 describe('测试默认导出js部分与template 依赖关系', () => {
   const file = fs.readFileSync(path.resolve(__dirname, './script.test.vue'));
   const template = file.toString();
-  const ast = preProcess(template);
+  const [ast] = preProcess(template);
 
   describe('parseData', () => {
     const dataMethod = getObjectProperty(ast, 'data');

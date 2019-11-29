@@ -99,12 +99,14 @@ export function parseWatch(
  * @param {string} script
  * @returns {(ObjectExpression | null)}
  */
-export function preProcess(script: string): ObjectExpression | null {
+export function preProcess(script: string): [ObjectExpression | null, number] {
   const regex = /\<script\>([\s\S]+)\<\/script\>/;
   let content: string = script;
+  let offset = 8;
   let ret: RegExpExecArray;
   if ((ret = regex.exec(script))) {
     content = ret[1];
+    offset += ret.index;
   }
   try {
     const ast = parse(content, { sourceType: 'module' });
@@ -122,24 +124,26 @@ export function preProcess(script: string): ObjectExpression | null {
         }
       },
     });
-    return objectExpression || null;
+    return [objectExpression || null, offset];
   } catch (err) {
-    return null;
+    return [null, 0];
   }
 }
 
 export class ScriptProcessor {
-  private unusedNodeMap: Map<string, Node>;
+  private unusedNodeMap: Map<string, ObjectProperty | ObjectMethod>;
   private usedNodeMap: Map<string, Node>;
   private unFoundNodeMap: Map<string, Set<string>>;
   private usedTokenSet: Set<string>;
+  private offset: number;
 
   constructor(usedTokens: string[], sourceCode: string) {
     this.usedNodeMap = new Map<string, Node>();
-    this.unusedNodeMap = new Map<string, Node>();
+    this.unusedNodeMap = new Map<string, ObjectProperty | ObjectMethod>();
     this.usedTokenSet = new Set<string>(usedTokens);
     this.unFoundNodeMap = new Map<string, Set<string>>();
-    const ast = preProcess(sourceCode);
+    const [ast, offset] = preProcess(sourceCode);
+    this.offset = offset;
     this.process(ast);
   }
 
@@ -148,9 +152,14 @@ export class ScriptProcessor {
   }
 
   getUnusedNodeDesc(): INodeDescription[] {
+    const offset = this.offset;
     const descriptionList: INodeDescription[] = [];
     this.unusedNodeMap.forEach((node, key) => {
-      descriptionList.push({ start: node.start, end: node.end, name: key });
+      descriptionList.push({
+        start: node.start + offset,
+        end: node.end + offset,
+        name: key,
+      });
     });
     return descriptionList;
   }
@@ -279,19 +288,23 @@ export class ScriptProcessor {
           }
         }
         this.markObjectMethodIdentifier(property, used);
-      } else {
-        if (isIdentifier(property.argument)) {
-          if (this.usedTokenSet.has(property.argument.name)) {
-            this.usedNodeMap.set(property.argument.name, property);
-          } else {
-            this.unusedNodeMap.set(property.argument.name, property);
-          }
-        }
       }
+      // else {
+      //   if (isIdentifier(property.argument)) {
+      //     if (this.usedTokenSet.has(property.argument.name)) {
+      //       this.usedNodeMap.set(property.argument.name, property);
+      //     } else {
+      //       this.unusedNodeMap.set(property.argument.name, property);
+      //     }
+      //   }
+      // }
     });
   }
 
-  markObjectMethodIdentifier(ast: ObjectProperty | ObjectMethod, used: boolean) {
+  markObjectMethodIdentifier(
+    ast: ObjectProperty | ObjectMethod,
+    used: boolean
+  ) {
     traverse(ast, {
       ThisExpression: (path: NodePath) => {
         const parent = path.parent;
@@ -336,7 +349,10 @@ export class ScriptProcessor {
     this.markIdentifiers(properties, true);
   }
 
-  markIdentifiers(properties: (ObjectMethod | ObjectProperty)[], needTraverse = false) {
+  markIdentifiers(
+    properties: (ObjectMethod | ObjectProperty)[],
+    needTraverse = false
+  ) {
     for (let i = 0; i < properties.length; i++) {
       const key = properties[i].key;
       if (isIdentifier(key)) {
