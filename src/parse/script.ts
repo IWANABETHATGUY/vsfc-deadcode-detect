@@ -199,7 +199,6 @@ export class ScriptProcessor {
         }
       }
     });
-    debugger;
     let flag: boolean;
     do {
       flag = false;

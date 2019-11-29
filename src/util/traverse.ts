@@ -44,7 +44,7 @@ export function traverseTemplateAst(
     result.push(attrsMap);
   }
 
-  if (children) {
+  if (children && children.length) {
     let len = children.length;
     for (let i = 0; i < len; i++) {
       result = result.concat(traverseTemplateAst(children[i], [...scope]));
@@ -57,6 +57,9 @@ export function traverseTemplateAst(
         result = result.concat(traverseTemplateAst(condition.block, [...scope]));
       }
     }
+  }
+  if (node.scopedSlots && node.scopedSlots['"default"']) {
+    result = result.concat(traverseTemplateAst(node.scopedSlots['"default"'], [...scope]));
   }
   if (node.alias) {
     scope.pop();
