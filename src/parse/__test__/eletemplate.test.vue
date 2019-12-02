@@ -85,13 +85,19 @@ export default {
       placeNone: false, // 搜索无结果，显示提示信息
       whatever: '',
       somethingelse: false,
-      gggg
+      gggg,
+      handlerWatch: 'test'
     };
   },
   watch: {
     whatever(newValue) {
       this.somethingelse;
     },
+    handlerWatch: {
+      handler(newVal) {
+        
+      }
+    }
   },
   mounted() {
     this.cityid = this.$route.params.cityid;
