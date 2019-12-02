@@ -2,18 +2,18 @@
   <div class="record-wrapper">
     <div class="banner">
       <div class="record-info">
-        <p class="title">我的</p>
+        <p class="title"></p>
         <div class="detail">
           <div class="cost-amount">
-            <p class="value">{{ statistic['costAmount'] }}</p>
-            <p class="label">累计</p>
+            <p class="value">{{ statts['cos'] }}</p>
+            <p class="label"></p>
           </div>
           <div class="earn-amount">
-            <p class="value">{{ statistic['earnAmount'] | filter }}</p>
+            <p class="value">{{ statts['ear'] | filter }}</p>
             <p class="label">label）</p>
           </div>
-          <div class="successed-check-in">
-            <p class="value">{{ statistic['successCheckedIn'] }}</p>
+          <div class="successed-">
+            <p class="value">{{ statts['succ'] }}</p>
             <p class="label">）f</p>
           </div>
         </div>
@@ -21,50 +21,50 @@
     </div>
     <div class="tip">
       <div>
-        每日<span class="highlight">22:00</span>
+        <span class="highlight">22:00</span>
       </div>
     </div>
-    <div class="record-list-container" v-show="recordList.length">
+    <div class="record-list-container" v-show="recList.length">
       <div class="header">
-        <span>日期</span>
-        <span>结果</span>
-        <span>金币</span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
       <ul class="list" ref="list">
         <li
           class="item"
-          v-for="(item, index) in recordList"
+          v-for="(item, index) in recList"
           :id="item.id"
-          :class="{ waiting: item.status === '卡' }"
+          :class="{ waiting: item.status === 'lll' }"
         > 
           <div v-for="(it, idx) in list"></div>
-          <span class="date">{{ item.create_time }}</span>
-          <span class="status">{{ item.status }}</span>
+          <span class="date">{{ item.create_t }}</span>
+          <span class="status">{{ item.sta }}</span>
           <span class="point">{{
-            -item.count_once * item.times_clock_in
+            -item.coun_ * item.tim_
           }}</span>
           <span
             ><span
               class="earn"
               :class="     {
-                success: item.number_won,
-                show: !(what.number_won === 0 && some.success_clock_in === 1),
+                success: item.numb_,
+                show: !(what.numb_ === 0 && some.succe_ === 1),
               }"
               v-show="item.status !== '卡'"
               >{{
-                item.number_won === 0 && item.success_clock_in === 1
+                item.numb_ === 0 && item.succ === 1
                   ? '分'
-                  : `+${item.number_won}`
+                  : `+${item.numb_}`
               }}</span
             ></span
           >
         </li>
-        <li v-show="loading" class="check-loading" :class="[isActive ? activeClass : '', errorClass]">
+        <li v-show="loading" class="check-l" :class="[isActive ? activeClass : '', errorClass]">
           <span></span>
         </li>
       </ul>
     </div>
-    <div v-if="hasLoaded && !recordList.length" class="placeholder" @click="test2">
+    <div v-if="hasLoaded && !recList.length" class="placeholder" @click="test2">
       <img
         alt="placeholder"
       />
@@ -78,10 +78,10 @@ export default {
   name: 're',
   computed: {
     currentDate() {
-      return dateFormat(Date.now()).date.trim();
+      return dateFmat(Date.now()).date.trim();
     },
     uid() {
-      return User.getUserInfo('id');
+      return Usr.gero('id');
     },
     returnTest() {
       return this.test
@@ -89,10 +89,10 @@ export default {
   },
   data() {
     return {
-      recordList: [],
+      recList: [],
       hasLoaded: false,
       page: 1,
-      statistic: {
+      statts: {
       },
       hasMore: true,
       loading: false,
@@ -118,12 +118,12 @@ export default {
         this.page++;
         if (ret && ret.array) {
           if (ret.array.length) {
-            const normoalizedData = ret.array.map(item => {
+            const normoali = ret.array.map(item => {
               return {
                 ...item,
               };
             });
-            this.recordList.push(...normoalizedData);
+            this.recList.push(...normoali);
           } else {
             this.hasMore = false;
           }
@@ -133,22 +133,19 @@ export default {
       } catch (error) {
       }
     },
-    async getStatistic() {
+    async getStattis() {
       try {
-        const ret = await getStatistic({ uid: this.uid });
+        const ret = await getStattis({ uid: this.uid });
         if (ret && ret.code === 0) {
-          this.statistic.costAmount = ret.total;
-          this.statistic.earnAmount = ret.total_won;
-          this.statistic.successCheckedIn = ret.total_success_day;
+          this.statts.a = ret.tot;
+          this.statts.b = ret.tot_;
+          this.statts.c = ret.tot;
         }
       } catch (err) {
       }
     },
     async handleListScroll() {
       const list = this.$refs['list'];
-      const offsetHeight = list.offsetHeight;
-      const scrollHeight = list.scrollHeight;
-      const scrollTop = list.scrollTop;
       if (
         offsetHeight + scrollTop >= scrollHeight &&
         this.hasMore &&
@@ -165,18 +162,18 @@ export default {
     },
   },
   async mounted() {
-    if (!haslogin()) {
+    if (!hagin()) {
       login();
     }
-    this.stat('welfare_coin_punch_myrecord_page_show');
+    this.stat();
     if (Object.keys(this.$route.params).length) {
-      this.statistic = {
-        ...this.statistic,
+      this.statts = {
+        ...this.statts,
         ...this.$route.params,
       };
       this.$forceUpdate();
     } else {
-      this.getStatistic();
+      this.getStattis();
     }
     const list = this.$refs['list'];
     if (list) {

@@ -85,10 +85,10 @@ describe('测试默认导出js部分与template 依赖关系', () => {
     expect(list.length).toEqual(7);
     expect(nameList.sort()).toEqual(
       [
-        'recordList',
+        'recList',
         'hasLoaded',
         'page',
-        'statistic',
+        'statts',
         'hasMore',
         'loading',
         'thatis'
