@@ -30,12 +30,26 @@ describe('测试模板提取变量', () => {
     );
     const file = template.toString();
     expect(parseTemplate(file).sort()).toEqual(
-      [
-        'recommendMovies',
-        'movieLink',
-        'reportFilm',
-        'showAllMedia'
-      ].sort()
+      ['recommendMovies', 'movieLink', 'reportFilm', 'showAllMedia'].sort()
     );
+  });
+
+  test('template statement with error', () => {
+    const code = `
+    <template>
+      <div>{{test??b}}</div>
+    </template>
+
+    <script>
+    export default {
+
+    }
+    </script>
+
+    <style>
+
+    </style>
+    `;
+    expect(parseTemplate(code).sort()).toEqual([].sort());
   });
 });
