@@ -77,24 +77,50 @@ describe('测试默认导出js部分与template 依赖关系', () => {
   const [ast] = preProcess(template);
 
   describe('parseData', () => {
-    const dataMethod = getObjectProperty(ast, 'data');
+    test('data is an legal ObjectMethod', () => {
+      const dataMethod = getObjectProperty(ast, 'data');
 
-    expect(dataMethod).not.toBe(null);
-    expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
-    const list = parseData(dataMethod as ObjectMethod);
-    const nameList = list.map(item => (<Identifier>item.key).name);
-    expect(list.length).toEqual(7);
-    expect(nameList.sort()).toEqual(
-      [
-        'recList',
-        'hasLoaded',
-        'page',
-        'statts',
-        'hasMore',
-        'loading',
-        'thatis',
-      ].sort()
-    );
+      expect(dataMethod).not.toBe(null);
+      expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
+      const list = parseData(dataMethod as ObjectMethod);
+      const nameList = list.map(item => (<Identifier>item.key).name);
+      expect(list.length).toEqual(7);
+      expect(nameList.sort()).toEqual(
+        [
+          'recList',
+          'hasLoaded',
+          'page',
+          'statts',
+          'hasMore',
+          'loading',
+          'thatis',
+        ].sort()
+      );
+    });
+    test('data return nothing', () => {
+      const code = `
+      <template>
+  
+      </template>
+      
+      <script>
+      export default {
+        data() {
+          
+        }
+      }
+      </script>
+      
+      <style>
+      
+      </style>`;
+      const [ast] = preProcess(code);
+      const dataMethod = getObjectProperty(ast, 'data');
+      expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
+      const list = parseData(dataMethod as ObjectMethod);
+      expect(list.length).toEqual(0);
+    })
+    
   });
 
   describe('测试script 依赖分析', () => {
@@ -110,7 +136,9 @@ describe('测试默认导出js部分与template 依赖关系', () => {
   });
 
   describe('测试单文件deadcode 分析', () => {
-    const file = fs.readFileSync(path.resolve(__dirname, './eletemplate.test.vue'));
+    const file = fs.readFileSync(
+      path.resolve(__dirname, './eletemplate.test.vue')
+    );
     const template = file.toString();
     isTwoSortedArrayEqual(unusedToken(template), []);
   });
