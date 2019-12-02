@@ -86,7 +86,8 @@ export default {
       whatever: '',
       somethingelse: false,
       gggg,
-      handlerWatch: 'test'
+      handlerWatch: 'test',
+      handlerWatchData: 2222
     };
   },
   watch: {
@@ -95,7 +96,7 @@ export default {
     },
     handlerWatch: {
       handler(newVal) {
-        
+        this.handlerWatchData
       }
     }
   },
