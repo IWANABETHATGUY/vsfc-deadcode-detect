@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ObjectMethod, Identifier } from '@babel/types';
-import { getObjectProperty } from '../../util/testUtil';
+import { getObjectProperty, isTwoSortedArrayEqual } from '../../util/testUtil';
 import { preProcess, parseData, ScriptProcessor } from '../script';
 import { parseTemplate } from '../template';
+import unusedToken from '../..';
 
 describe('测试解析script标签内容', () => {
   test('empty string should return null', () => {
@@ -61,7 +62,7 @@ describe('测试解析script标签内容', () => {
       );
       const file = template.toString();
 
-      const [ast,] = preProcess(file);
+      const [ast] = preProcess(file);
 
       expect(ast).not.toEqual(null);
       expect(ast.type).toEqual('ObjectExpression');
@@ -91,7 +92,7 @@ describe('测试默认导出js部分与template 依赖关系', () => {
         'statts',
         'hasMore',
         'loading',
-        'thatis'
+        'thatis',
       ].sort()
     );
   });
@@ -100,7 +101,17 @@ describe('测试默认导出js部分与template 依赖关系', () => {
     const usedTokens = parseTemplate(template);
     const processor = new ScriptProcessor(usedTokens, template);
     expect(processor.getUnusedNodeDesc().length).toEqual(3);
-    expect(processor.getUnusedNodeDesc().map(item => item.name).sort()).toEqual(['thatis', 'test', 'returnTest'].sort())
-  })
-  
+    expect(
+      processor
+        .getUnusedNodeDesc()
+        .map(item => item.name)
+        .sort()
+    ).toEqual(['thatis', 'test', 'returnTest'].sort());
+  });
+
+  describe('测试单文件deadcode 分析', () => {
+    const file = fs.readFileSync(path.resolve(__dirname, './eletemplate.test.vue'));
+    const template = file.toString();
+    isTwoSortedArrayEqual(unusedToken(template), []);
+  });
 });

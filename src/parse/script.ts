@@ -252,6 +252,9 @@ export class ScriptProcessor {
       for (let i = 0; i < list.length; i++) {
         const item = list[i];
         if (isObjectMethod(item)) {
+          if (isIdentifier(item.key)) {
+            this.unFoundNodeMap.set(item.key.name, null);
+          }
           this.processEffectMethod(item);
         } else if (isObjectExpression(item.value)) {
           for (const prop of item.value.properties) {
