@@ -2,18 +2,22 @@
   "name": "vscf-deadcode-detect",
   "version": "0.0.1",
   "description": "a repo to detect vue single file component dead code",
-  "main": "index.js",
+  "main": "dist/vsfcdcd.umd.js",
+  "module": "dist/vsfcdcd.es5.js",
+  "typings": "dist/types/index.d.ts",
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "cp": "cp ./src/parse/__test__/*.vue ./out/parse/__test__ && cp -R ./src/template.test ./out/"
+    "cp": "cp ./src/parse/__test__/*.vue ./out/parse/__test__ && cp -R ./src/template.test ./out/",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts",
+    "prebuild": "rimraf dist"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/IWANABETHATGUY/vscf-deadcode-detect.git"
   },
   "author": "hxj <974153916@qq.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/IWANABETHATGUY/vscf-deadcode-detect/issues"
   },
@@ -25,10 +29,23 @@
   "devDependencies": {
     "@types/babel__traverse": "^7.0.7",
     "@types/jest": "^24.0.23",
+    "@types/lodash.camelcase": "^4.3.6",
     "@types/node": "^12.12.9",
+    "@types/rimraf": "^2.0.3",
+    "@types/rollup-plugin-commonjs": "^9.3.1",
+    "@types/rollup-plugin-json": "^3.0.2",
     "@types/typescript": "^2.0.0",
+    "@types/vue": "^2.0.0",
     "jest": "^24.9.0",
+    "lodash.camelcase": "^4.3.0",
+    "rimraf": "^3.0.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.25.2",
     "ts-jest": "^24.1.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.2",
+    "vue": "^2.6.10"
   }
 }

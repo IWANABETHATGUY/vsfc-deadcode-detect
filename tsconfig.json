@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES2015",
     "target": "es6",
-    "outDir": "out",
     "lib": ["es6", "dom"],
     "sourceMap": true,
-    "rootDir": "src",
     "moduleResolution": "node",
+    "declarationDir": "dist/types",
+    "declaration": true,
+    "outDir": "dist/lib",
     /* Strict Type-Checking Option */
     // "strict": true /* enable all strict type-checking options */,
     /* Additional Checks */
@@ -15,5 +16,5 @@
     // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
     // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
-  "exclude": ["node_modules", ".vscode-test"]
+  "include": ["src"]
 }

@@ -21,7 +21,7 @@ import {
 } from '@babel/types';
 import { isLifeCircleFunction } from '../util/parse';
 
-interface INodeDescription {
+export interface INodeDescription {
   name: string;
   start: number;
   end: number;

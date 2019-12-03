@@ -7,7 +7,6 @@ const file = template.toString();
 console.time('template');
 const tokenList = parseTemplate(file);
 console.timeEnd('template');
-
 console.time('script');
 const sp = new ScriptProcessor(tokenList, file);
 console.timeEnd('script');
