@@ -1,10 +1,10 @@
 import * as parser from '@babel/parser';
 import { Node } from '@babel/traverse';
 import {
-  isNode,
-  isIdentifier,
   isObjectProperty,
   isMemberExpression,
+  isNode,
+  isIdentifier,
 } from '@babel/types';
 
 // const code2 = ` ({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
@@ -32,7 +32,9 @@ export function getVariable(ast: Node): string[] {
     if (cur.type === 'Identifier') {
       if (
         (isObjectProperty(parent) && parent.key === cur) ||
-        (isMemberExpression(parent) && cur === parent.property && !parent.computed)
+        (isMemberExpression(parent) &&
+          cur === parent.property &&
+          !parent.computed)
       ) {
         continue;
       }
@@ -56,9 +58,8 @@ export function getVariable(ast: Node): string[] {
             cur.type !== 'ObjectProperty' &&
             cur.type !== 'LogicalExpression' &&
             cur.type !== 'BinaryExpression'
-            
           ) {
-            if(isMemberExpression(cur) && cur.computed) {
+            if (isMemberExpression(cur) && cur.computed) {
               continue;
             }
             break;

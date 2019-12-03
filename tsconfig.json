@@ -6,6 +6,7 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "declarationDir": "dist/types",
+    "resolveJsonModule": true,
     "declaration": true,
     "outDir": "dist/lib",
     /* Strict Type-Checking Option */
@@ -16,5 +17,6 @@
     // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
     // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["**/__test__/"]
 }
