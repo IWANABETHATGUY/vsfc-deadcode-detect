@@ -181,6 +181,9 @@ export class ScriptProcessor {
    */
 
   process(ast: ObjectExpression) {
+    if (ast === null) {
+      return [];
+    }
     ast.properties.forEach(property => {
       if (
         (isObjectMethod(property) || isObjectProperty(property)) &&
