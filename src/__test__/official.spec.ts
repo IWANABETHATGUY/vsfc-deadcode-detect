@@ -1,4 +1,4 @@
-import unusedToken from '..';
+import { unusedToken } from '..';
 import { isTwoSortedArrayEqual } from '../util/testUtil';
 
 describe('使用官方eslint-vue-plugin 测试样例', () => {

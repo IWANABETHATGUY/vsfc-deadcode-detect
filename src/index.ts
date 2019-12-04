@@ -17,7 +17,14 @@ export {
   getVariable,
 } from './parse/templateStatement';
 
-export default function unusedToken(sourcode: string) {
+/**
+ * 获取当前单文件应用的未使用token 以及相应的描述
+ * 
+ * @export
+ * @param {string} sourcode 
+ * @returns 
+ */
+export function unusedToken(sourcode: string) {
   const tokenList = parseTemplate(sourcode);
   const sp = new ScriptProcessor(tokenList, sourcode);
   return sp.getUnusedNodeDesc();

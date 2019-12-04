@@ -4,7 +4,7 @@ import { ObjectMethod, Identifier } from '@babel/types';
 import { getObjectProperty, isTwoSortedArrayEqual } from '../../util/testUtil';
 import { preProcess, parseData, ScriptProcessor } from '../script';
 import { parseTemplate } from '../template';
-import unusedToken from '../..';
+import { unusedToken } from '../..';
 
 describe('测试解析script标签内容', () => {
   test('empty string should return null', () => {
@@ -119,8 +119,7 @@ describe('测试默认导出js部分与template 依赖关系', () => {
       expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
       const list = parseData(dataMethod as ObjectMethod);
       expect(list.length).toEqual(0);
-    })
-    
+    });
   });
 
   describe('测试script 依赖分析', () => {
