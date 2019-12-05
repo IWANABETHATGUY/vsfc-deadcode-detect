@@ -1,5 +1,6 @@
 import traverse, { NodePath, Node } from '@babel/traverse';
 import { parse } from '@babel/parser';
+import { IDetectOptions } from '../index';
 import {
   ObjectMethod,
   ObjectExpression,
@@ -19,7 +20,7 @@ import {
   isArrayExpression,
   isStringLiteral,
 } from '@babel/types';
-import { isLifeCircleFunction } from '../util/parse';
+import { isLifeCircleFunction, isNuxtConfigFunction } from '../util/parse';
 
 export interface INodeDescription {
   name: string;
@@ -144,7 +145,11 @@ export class ScriptProcessor {
   private usedTokenSet: Set<string>;
   private offset: number;
 
-  constructor(usedTokens: string[], sourceCode: string) {
+  constructor(
+    usedTokens: string[],
+    sourceCode: string,
+    options: IDetectOptions = { nuxt: false }
+  ) {
     this.usedNodeMap = new Map<string, Node>();
     this.unusedNodeMap = new Map<
       string,
@@ -154,7 +159,7 @@ export class ScriptProcessor {
     this.unFoundNodeMap = new Map<string, Set<string>>();
     const [ast, offset] = preProcess(sourceCode);
     this.offset = offset;
-    this.process(ast);
+    this.process(ast, options.nuxt);
   }
 
   getUnusedNodeMap() {
@@ -180,7 +185,7 @@ export class ScriptProcessor {
    * @param {string[]} usedToken  s 在template中使用的token列表
    */
 
-  process(ast: ObjectExpression) {
+  process(ast: ObjectExpression, nuxt: boolean) {
     if (ast === null) {
       return [];
     }
@@ -216,6 +221,13 @@ export class ScriptProcessor {
               if (isObjectMethod(property)) {
                 this.processEffectMethod(property);
               }
+            }
+            if (
+              nuxt &&
+              isNuxtConfigFunction(property.key.name) &&
+              isObjectMethod(property)
+            ) {
+              this.processEffectMethod(property);
             }
             break;
         }
