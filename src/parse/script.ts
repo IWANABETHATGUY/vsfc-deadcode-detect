@@ -187,6 +187,7 @@ export class ScriptProcessor {
 
   process(ast: ObjectExpression, nuxt: boolean) {
     if (ast === null) {
+      console.warn(`parse error`);
       return [];
     }
     ast.properties.forEach(property => {
