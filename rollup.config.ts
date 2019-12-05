@@ -80,7 +80,6 @@ export default {
       format: 'es', // the preferred format
     },
   ],
-  exlucde: ['**/__test__/'],
   external: [...Object.keys(pkg.dependencies || {})],
   plugins: [
     typescript({
