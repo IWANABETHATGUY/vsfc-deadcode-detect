@@ -19,6 +19,8 @@ import {
   isSpreadElement,
   isArrayExpression,
   isStringLiteral,
+  isFunctionExpression,
+  FunctionExpression,
 } from '@babel/types';
 import { isLifeCircleFunction, isNuxtConfigFunction } from '../util/parse';
 
@@ -277,6 +279,12 @@ export class ScriptProcessor {
             if (isObjectMethod(prop) && prop.key.name === 'handler') {
               this.processEffectMethod(prop);
               break;
+            } else if (
+              isObjectProperty(prop) &&
+              isFunctionExpression(prop.value)
+            ) {
+              this.processEffectMethod(prop.value);
+              break;
             }
           }
         }
@@ -284,7 +292,7 @@ export class ScriptProcessor {
     }
   }
 
-  processEffectMethod(property: ObjectMethod) {
+  processEffectMethod(property: ObjectMethod | FunctionExpression) {
     traverse(property, {
       ThisExpression: (path: NodePath) => {
         const parent = path.parent;
