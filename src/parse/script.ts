@@ -1,4 +1,4 @@
-import traverse, { NodePath, Node } from '@babel/traverse';
+import traverse, { NodePath, Node, Scope } from '@babel/traverse';
 import { parse } from '@babel/parser';
 import { IDetectOptions } from '../index';
 import {
@@ -6,7 +6,6 @@ import {
   ObjectExpression,
   ObjectProperty,
   SpreadElement,
-  Identifier,
   ArrayExpression,
   StringLiteral,
   isObjectExpression,
@@ -21,6 +20,9 @@ import {
   isStringLiteral,
   isFunctionExpression,
   FunctionExpression,
+  isThisExpression,
+  isVariableDeclarator,
+  MemberExpression,
 } from '@babel/types';
 import { isLifeCircleFunction, isNuxtConfigFunction } from '../util/parse';
 
@@ -293,8 +295,13 @@ export class ScriptProcessor {
   }
 
   processEffectMethod(property: ObjectMethod | FunctionExpression) {
+    const scopeSet = new Set<Scope>();
     traverse(property, {
       ThisExpression: (path: NodePath) => {
+        if (!scopeSet.has(path.scope)) {
+          scopeSet.add(path.scope);
+          this.markScope(path.scope, true, '', true);
+        }
         const parent = path.parent;
         if (!isMemberExpression(parent)) {
           return;
@@ -342,37 +349,109 @@ export class ScriptProcessor {
     ast: ObjectProperty | ObjectMethod,
     used: boolean
   ) {
+    if (!isIdentifier(ast.key) || ast.computed) {
+      return;
+    }
+    const scopeSet = new Set<Scope>();
+    const name = ast.key.name;
     traverse(ast, {
       ThisExpression: (path: NodePath) => {
+        if (!scopeSet.has(path.scope)) {
+          scopeSet.add(path.scope);
+          this.markScope(path.scope, used, name);
+        }
         const parent = path.parent;
         if (!isMemberExpression(parent)) {
           return;
         }
-        const node = parent.property;
-        if (isIdentifier(node)) {
-          if (used && this.unusedNodeMap.has(node.name)) {
-            const unusedNode = this.unusedNodeMap.get(node.name);
-            this.unusedNodeMap.delete(node.name);
-            this.usedNodeMap.set(node.name, unusedNode);
-          } else {
-            if (this.unFoundNodeMap.has(node.name)) {
-              const set = this.unFoundNodeMap.get(node.name);
-              if (set) {
-                set.add(node.name);
-              }
-            } else {
-              this.unFoundNodeMap.set(
-                node.name,
-                new Set([(<Identifier>ast.key).name])
-              );
-            }
-          }
-        }
+        this.markMemberExpression(parent, used, name);
+        // this.markThisExpression(, used, ast.key.name);
       },
       noScope: true,
     });
   }
 
+  /**
+   * marked MemberExpression 当object 是this
+   *
+   * @param {MemberExpression} parent
+   * @param {boolean} used
+   * @param {string} name
+   *
+   * @memberOf ScriptProcessor
+   */
+  markMemberExpression(parent: MemberExpression, used: boolean, name: string) {
+    const property = parent.property;
+    const computed = parent.computed;
+    if (isStringLiteral(property)) {
+      this.markThisExpression(property.value, used, name);
+    } else if (isIdentifier(property) && !computed) {
+      this.markThisExpression(property.name, used, name);
+    }
+  }
+  markScope(
+    scope: Scope,
+    used: boolean,
+    key: string,
+    ignoreCondition: boolean = false
+  ) {
+    const bindings = scope.bindings;
+    Object.keys(bindings).forEach(bindingkey => {
+      const node = bindings[bindingkey].path.node;
+      if (isVariableDeclarator(node) && isThisExpression(node.init)) {
+        bindings[bindingkey].referencePaths.forEach(refPath => {
+          const refNode = refPath.node;
+          const refParent = refPath.parent;
+          if (isIdentifier(refNode) && isMemberExpression(refParent)) {
+            if (ignoreCondition) {
+              if (isStringLiteral(refParent.property)) {
+                this.unFoundNodeMap.set(refParent.property.value, null);
+              } else if (
+                isIdentifier(refParent.property) &&
+                !refParent.computed
+              ) {
+                this.unFoundNodeMap.set(refParent.property.name, null);
+              }
+            } else {
+              this.markMemberExpression(refParent, used, key);
+            } 
+            // const property = refPath.parent.property;
+            // const computed = refPath.parent.computed;
+            // if (isStringLiteral(property)) {
+            //   this.markThisExpression(property.value, used, key);
+            // } else if (isIdentifier(property) && !computed) {
+            //   this.markThisExpression(property.name, used, key);
+            // }
+          }
+        });
+      }
+    });
+  }
+  /**
+   *
+   *
+   * @param {string} name 代表MemberExpression 中的property是 Stringliteral 或者Identifier 时的值
+   * @param {boolean} used
+   * @param {string} key 代表指向该 变量 的ObjectExpression 或者ObjectMethod 的key.name
+   *
+   * @memberOf ScriptProcessor
+   */
+  markThisExpression(name: string, used: boolean, key: string) {
+    if (used && this.unusedNodeMap.has(name)) {
+      const unusedNode = this.unusedNodeMap.get(name);
+      this.unusedNodeMap.delete(name);
+      this.usedNodeMap.set(name, unusedNode);
+    } else {
+      if (this.unFoundNodeMap.has(name)) {
+        const set = this.unFoundNodeMap.get(name);
+        if (set) {
+          set.add(name);
+        }
+      } else {
+        this.unFoundNodeMap.set(name, new Set([key]));
+      }
+    }
+  }
   processProps(ast: ObjectProperty) {
     if (isObjectExpression(ast.value)) {
       const properties = parseProps(ast.value);

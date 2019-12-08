@@ -141,4 +141,11 @@ describe('测试默认导出js部分与template 依赖关系', () => {
     const template = file.toString();
     isTwoSortedArrayEqual(unusedToken(template), []);
   });
+
+  describe('测试简单的作用域分析', () => {
+    const file = fs.readFileSync(path.resolve(__dirname, './scope.test.vue'));
+    const template = file.toString();
+    isTwoSortedArrayEqual(unusedToken(template), []);
+  })
+  
 });

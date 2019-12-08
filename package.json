@@ -11,7 +11,10 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "cp": "cp ./src/parse/__test__/*.vue ./out/parse/__test__ && cp -R ./src/template.test ./out/",
+    "cp": "cp -R ./src/parse/__test__ ./dist/lib/parse && cp -R ./src/template.test ./dist/lib",
+    "compile": "tsc",
+    "postcompile": "npm run cp",
+    "precompile": "rimraf out",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "prebuild": "rimraf dist"
   },

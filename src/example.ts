@@ -2,7 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { parseTemplate } from './parse/template';
 import { ScriptProcessor } from './parse/script';
-const template = fs.readFileSync(path.resolve(__dirname, './template.test/movie.test.vue'));
+// const template = fs.readFileSync(path.resolve(__dirname, './template.test/movie.test.vue'));
+const template = fs.readFileSync(path.resolve(__dirname, './parse/__test__/scope.test.vue'));
+
 const file = template.toString();
 console.time('template');
 const tokenList = parseTemplate(file);
