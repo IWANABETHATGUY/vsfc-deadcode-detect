@@ -112,4 +112,7 @@ describe('extract variable from statement test', () => {
       ['item', 'index'].sort()
     );
   });
+  test('template text interpolation', () => {
+    expect(getTemplateStatementVariable("$sget(actionTypeMap[`${item.action_type}`], 'type') || ''").sort()).toEqual(['$sget', 'actionTypeMap', 'item'].sort())
+  })
 });

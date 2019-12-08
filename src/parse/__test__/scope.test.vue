@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{c}} {{d}}
   </div>
 </template>
 
@@ -8,7 +9,9 @@ export default {
   data() {
     return {
       a: 'test',
-      b: 'test'
+      b: 'test',
+      c,
+      d
     }
   },
   mounted() {
