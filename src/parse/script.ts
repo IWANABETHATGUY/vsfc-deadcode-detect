@@ -30,6 +30,16 @@ export interface INodeDescription {
   name: string;
   start: number;
   end: number;
+  loc: {
+    start: {
+      line: number;
+      column: number;
+    };
+    end: {
+      line: number;
+      column: number;
+    };
+  };
 }
 
 export function parseData(
@@ -108,7 +118,9 @@ export function parseWatch(
  * @param {string} script
  * @returns {(ObjectExpression | null)}
  */
-export function preProcess(script: string): [ObjectExpression | null, number] {
+export function preProcess(
+  script: string
+): [ObjectExpression | null, number, number] {
   const regex = /\<script\>([\s\S]+)\<\/script\>/;
   let content: string = script;
   let offset = 8;
@@ -117,6 +129,7 @@ export function preProcess(script: string): [ObjectExpression | null, number] {
     content = ret[1];
     offset += ret.index;
   }
+  let line = script.slice(0, offset).split('\n').length - 1;
   try {
     const ast = parse(content, { sourceType: 'module' });
     let objectExpression: ObjectExpression;
@@ -133,9 +146,9 @@ export function preProcess(script: string): [ObjectExpression | null, number] {
         }
       },
     });
-    return [objectExpression || null, offset];
+    return [objectExpression || null, offset, line];
   } catch (err) {
-    return [null, 0];
+    return [null, 0, 0];
   }
 }
 
@@ -148,7 +161,7 @@ export class ScriptProcessor {
   private unFoundNodeMap: Map<string, Set<string>>;
   private usedTokenSet: Set<string>;
   private offset: number;
-
+  private line: number;
   constructor(
     usedTokens: string[],
     sourceCode: string,
@@ -161,7 +174,8 @@ export class ScriptProcessor {
     >();
     this.usedTokenSet = new Set<string>(usedTokens);
     this.unFoundNodeMap = new Map<string, Set<string>>();
-    const [ast, offset] = preProcess(sourceCode);
+    const [ast, offset, line] = preProcess(sourceCode);
+    this.line = line;
     this.offset = offset;
     this.process(ast, options.nuxt);
   }
@@ -178,6 +192,16 @@ export class ScriptProcessor {
         start: node.start + offset,
         end: node.end + offset,
         name: key,
+        loc: {
+          start: {
+            line: node.loc.start.line + this.line,
+            column: node.loc.start.column,
+          },
+          end: {
+            line: node.loc.end.line + this.line,
+            column: node.loc.end.column,
+          },
+        },
       });
     });
     return descriptionList;
@@ -414,7 +438,7 @@ export class ScriptProcessor {
               }
             } else {
               this.markMemberExpression(refParent, used, key);
-            } 
+            }
             // const property = refPath.parent.property;
             // const computed = refPath.parent.computed;
             // if (isStringLiteral(property)) {

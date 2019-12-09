@@ -10,7 +10,6 @@ console.time('template');
 const tokenList = parseTemplate(file);
 console.timeEnd('template');
 console.time('script');
-console.log(tokenList);
 const sp = new ScriptProcessor(tokenList, file);
 console.timeEnd('script');
 console.log(sp.getUnusedNodeDesc());
