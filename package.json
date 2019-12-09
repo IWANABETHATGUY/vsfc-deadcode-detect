@@ -4,7 +4,7 @@
   "description": "a repo to detect vue single file component dead code",
   "main": "dist/index.js",
   "module": "dist/index.es6.js",
-  "typings": "dist/lib/types/index.d.ts",
+  "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
