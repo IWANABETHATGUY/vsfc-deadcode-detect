@@ -56,6 +56,7 @@ export function getVariable(ast: Node): string[] {
           if (
             isIdentifier(value) &&
             cur.type !== 'CallExpression' &&
+            cur.type !== 'NewExpression' &&
             cur.type !== 'ConditionalExpression' &&
             cur.type !== 'ObjectProperty' &&
             cur.type !== 'LogicalExpression' &&
@@ -78,6 +79,9 @@ export function getVariable(ast: Node): string[] {
 function notFirstLevelIdentifier(cur: Identifier, parent: Node) {
   return (
     (isObjectProperty(parent) && parent.key === cur) ||
-    (isMemberExpression(parent) &&  cur === parent.property && !parent.computed && !isThisExpression(parent.object))
+    (isMemberExpression(parent) &&
+      cur === parent.property &&
+      !parent.computed &&
+      !isThisExpression(parent.object))
   );
 }

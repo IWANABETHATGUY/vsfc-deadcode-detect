@@ -15,5 +15,5 @@ import { getTemplateStatementVariable } from "./parse/templateStatement";
 // const sp = new ScriptProcessor(tokenList, file);
 // console.timeEnd('script');
 // console.log(sp.getUnusedNodeDesc());
-const ret = getTemplateStatementVariable("'回复 ' + this.userNick + '：'")
+const ret = getTemplateStatementVariable("getPubTime(new Date(created_time).getTime())");
 console.log(ret)

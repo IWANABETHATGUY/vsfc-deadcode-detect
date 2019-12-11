@@ -124,4 +124,12 @@ describe('extract variable from statement test', () => {
       getTemplateStatementVariable("'回复 ' + this.userNick + '：'").sort()
     ).toEqual(['userNick']);
   });
+
+  test('CallExpression with newExpression as a argument ', () => {
+    expect(
+      getTemplateStatementVariable(
+        'getPubTime(new Date(created_time).getTime())'
+      ).sort()
+    ).toEqual(['getPubTime', 'Date', 'created_time'].sort());
+  });
 });
