@@ -5,6 +5,8 @@ import {
   isMemberExpression,
   isNode,
   isIdentifier,
+  isThisExpression,
+  Identifier,
 } from '@babel/types';
 
 // const code2 = ` ({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
@@ -35,12 +37,7 @@ export function getVariable(ast: Node): string[] {
     const cur = nodeQueue.shift();
     const parent = parentQueue.shift();
     if (cur.type === 'Identifier') {
-      if (
-        (isObjectProperty(parent) && parent.key === cur) ||
-        (isMemberExpression(parent) &&
-          cur === parent.property &&
-          !parent.computed)
-      ) {
+      if (notFirstLevelIdentifier(cur, parent)) {
         continue;
       }
       result.push(cur.name);
@@ -64,8 +61,10 @@ export function getVariable(ast: Node): string[] {
             cur.type !== 'LogicalExpression' &&
             cur.type !== 'BinaryExpression'
           ) {
-            if (isMemberExpression(cur) && cur.computed) {
-              continue;
+            if (isMemberExpression(cur)) {
+              if (cur.computed || isThisExpression(cur.object)) {
+                continue;
+              }
             }
             break;
           }
@@ -74,4 +73,11 @@ export function getVariable(ast: Node): string[] {
     }
   }
   return [...new Set(result)];
+}
+// TODO: 这个改动有待观察
+function notFirstLevelIdentifier(cur: Identifier, parent: Node) {
+  return (
+    (isObjectProperty(parent) && parent.key === cur) ||
+    (isMemberExpression(parent) &&  cur === parent.property && !parent.computed && !isThisExpression(parent.object))
+  );
 }

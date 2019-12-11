@@ -113,6 +113,15 @@ describe('extract variable from statement test', () => {
     );
   });
   test('template text interpolation', () => {
-    expect(getTemplateStatementVariable("$sget(actionTypeMap[`${item.action_type}`], 'type') || ''").sort()).toEqual(['$sget', 'actionTypeMap', 'item'].sort())
-  })
+    expect(
+      getTemplateStatementVariable(
+        "$sget(actionTypeMap[`${item.action_type}`], 'type') || ''"
+      ).sort()
+    ).toEqual(['$sget', 'actionTypeMap', 'item'].sort());
+  });
+  test('BinaryExpression with Stringliteral', () => {
+    expect(
+      getTemplateStatementVariable("'回复 ' + this.userNick + '：'").sort()
+    ).toEqual(['userNick']);
+  });
 });
