@@ -3,7 +3,13 @@ import { traverseTemplateAst } from '../util/traverse';
 import { getTemplateStatementVariable } from './templateStatement';
 
 export function parseTemplate(code: string): string[] {
-  const result = compile(code);
+  const reg = /<template>([\s\S]+)<\/template>/
+  let regExec: RegExpExecArray = reg.exec(code);
+  let template = ''
+  if (regExec) {
+    template = regExec[1];
+  }
+  const result = compile(template);
   const attrMapList = traverseTemplateAst(result.ast, []);
   const tokenList: string[] = [];
   for (let i = 0; i < attrMapList.length; i++) {
