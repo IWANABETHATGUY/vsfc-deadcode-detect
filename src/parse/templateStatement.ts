@@ -79,7 +79,7 @@ export function getVariable(ast: Node): string[] {
 // TODO: 这个改动有待观察
 function notFirstLevelIdentifier(cur: Identifier, parent: Node) {
   return (
-    (isObjectProperty(parent) && parent.key === cur) ||
+    (isObjectProperty(parent) && parent.key === cur && !parent.computed) ||
     (isMemberExpression(parent) &&
       cur === parent.property &&
       !parent.computed &&

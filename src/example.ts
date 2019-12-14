@@ -1,4 +1,4 @@
-// import { getTemplateStatementVariable } from "./parse/templateStatement";
+import { getTemplateStatementVariable } from "./parse/templateStatement";
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -16,3 +16,5 @@ console.time('script');
 const sp = new ScriptProcessor(tokenList, file);
 console.timeEnd('script');
 console.log(sp.getUnusedNodeDesc());
+
+console.log(getTemplateStatementVariable('({ [praisedClass]: isPraise })'));

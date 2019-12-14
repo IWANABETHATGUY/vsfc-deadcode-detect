@@ -132,4 +132,10 @@ describe('extract variable from statement test', () => {
       ).sort()
     ).toEqual(['getPubTime', 'Date', 'created_time'].sort());
   });
+
+  test('ObjectPropert key is computed', () => {
+    expect(
+      getTemplateStatementVariable('{ [praisedClass]: isPraise }').sort()
+    ).toEqual(['praisedClass', 'isPraise'].sort());
+  });
 });
