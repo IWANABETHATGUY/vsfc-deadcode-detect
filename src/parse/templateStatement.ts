@@ -60,7 +60,8 @@ export function getVariable(ast: Node): string[] {
             cur.type !== 'ConditionalExpression' &&
             cur.type !== 'ObjectProperty' &&
             cur.type !== 'LogicalExpression' &&
-            cur.type !== 'BinaryExpression'
+            cur.type !== 'BinaryExpression' &&
+            cur.type !== 'AssignmentExpression'
           ) {
             if (isMemberExpression(cur)) {
               if (cur.computed || isThisExpression(cur.object)) {

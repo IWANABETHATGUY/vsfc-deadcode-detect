@@ -30,11 +30,11 @@ export function traverseTemplateAst(
     });
     result.push(attrsMap);
   } else if (node.type === 2) {
-    const attrsMap = { };
-    const regex = /{{(.+?)}}/g
+    const attrsMap = {};
+    const regex = /{{(.+?)}}/g;
     let match: RegExpExecArray;
     let index = 1;
-    while (match = regex.exec(node.text)) {
+    while ((match = regex.exec(node.text))) {
       attrsMap[`__text__${index++}`] = match[1];
     }
     Object.defineProperty(attrsMap, '__scope__', {
@@ -54,12 +54,20 @@ export function traverseTemplateAst(
     const ifConditions = node.ifConditions;
     for (let condition of ifConditions) {
       if (node !== condition.block) {
-        result = result.concat(traverseTemplateAst(condition.block, [...scope]));
+        result = result.concat(
+          traverseTemplateAst(condition.block, [...scope])
+        );
       }
     }
   }
-  if (node.scopedSlots && node.scopedSlots['"default"']) {
-    result = result.concat(traverseTemplateAst(node.scopedSlots['"default"'], [...scope]));
+  if (node.scopedSlots) {
+    Object.keys(node.scopedSlots).forEach(key => {
+      if ('type' in node.scopedSlots[key]) {
+        result = result.concat(
+          traverseTemplateAst(node.scopedSlots[key], [...scope])
+        );
+      }
+    });
   }
   if (node.alias) {
     scope.pop();
