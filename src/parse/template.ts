@@ -3,9 +3,9 @@ import { traverseTemplateAst } from '../util/traverse';
 import { getTemplateStatementVariable } from './templateStatement';
 
 export function parseTemplate(code: string): string[] {
-  const reg = /<template>([\s\S]+)<\/template>/
+  const reg = /<template>([\s\S]+)<\/template>/;
   let regExec: RegExpExecArray = reg.exec(code);
-  let template = ''
+  let template = '';
   if (regExec) {
     template = regExec[1];
   }
@@ -18,14 +18,14 @@ export function parseTemplate(code: string): string[] {
       const scope = attrMap['__scope__'];
       const temTokenList = Object.keys(attrMap).reduce((pre: string[], cur) => {
         return pre.concat(
-          ...(getTemplateStatementVariable(attrMap[cur]).filter(item => {
+          ...getTemplateStatementVariable(attrMap[cur]).filter(item => {
             return scope.indexOf(item) === -1;
-          }))
+          })
         );
-      }, [])
+      }, []);
       tokenList.push(...temTokenList);
     } catch (err) {
-      console.log(attrMap)
+      console.log(attrMap);
     }
   }
   return [...new Set(tokenList)];

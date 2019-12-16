@@ -21,7 +21,11 @@ export function traverseTemplateAst(
     for (let i = 0; i < keys.length; i++) {
       let key = keys[i];
       if (key.startsWith(':') || key.startsWith('v-') || key.startsWith('@')) {
-        attrsMap[key] = node.attrsMap[key];
+        if (key === 'v-for') {
+          attrsMap[key] = [node.for, node.alias, node.iterator1].filter(Boolean).join(',');
+        } else {
+          attrsMap[key] = node.attrsMap[key];
+        }
       }
     }
     Object.defineProperty(attrsMap, '__scope__', {

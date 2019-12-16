@@ -1,4 +1,4 @@
-import { getTemplateStatementVariable } from "./parse/templateStatement";
+// import { getTemplateStatementVariable } from "./parse/templateStatement";
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -10,11 +10,8 @@ const template = fs.readFileSync(path.resolve(__dirname, './template.test/movie.
 const file = template.toString();
 console.time('template');
 const tokenList = parseTemplate(file);
-console.log(tokenList);
 console.timeEnd('template');
 console.time('script');
 const sp = new ScriptProcessor(tokenList, file);
 console.timeEnd('script');
 console.log(sp.getUnusedNodeDesc());
-
-console.log(getTemplateStatementVariable('({ [praisedClass]: isPraise })'));
