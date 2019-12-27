@@ -3,7 +3,7 @@ import * as path from 'path';
 import { parseTemplate } from './parse/template';
 import { ScriptProcessor } from './parse/script';
 // import { getTemplateStatementVariable } from './parse/templateStatement';
-const template = fs.readFileSync(path.resolve(__dirname, './template.test/movie2.test.vue'));
+const template = fs.readFileSync(path.resolve(__dirname, './template.test/movie.test.vue'));
 // const template = fs.readFileSync(path.resolve(__dirname, './parse/__test__/eletemplate.test.vue'));
 
 const file = template.toString();

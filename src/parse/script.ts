@@ -469,7 +469,7 @@ export class ScriptProcessor {
       if (this.unFoundNodeMap.has(name)) {
         const set = this.unFoundNodeMap.get(name);
         if (set) {
-          set.add(name);
+          set.add(key);
         }
       } else {
         this.unFoundNodeMap.set(name, new Set([key]));
