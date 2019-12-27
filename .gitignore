@@ -68,3 +68,4 @@ out
 *.txt
 
 dist
+src/example.ts
