@@ -148,4 +148,9 @@ describe('测试默认导出js部分与template 依赖关系', () => {
     isTwoSortedArrayEqual(unusedToken(template), []);
   })
   
+  describe('测试 在函数中结构 this aka Vue instaance', () => {
+    const file = fs.readFileSync(path.resolve(__dirname, './destruct.test.vue'));
+    const template = file.toString();
+    isTwoSortedArrayEqual(unusedToken(template).map(desc => desc.name), ['th']);
+  })
 });

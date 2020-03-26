@@ -322,6 +322,7 @@ export class ScriptProcessor {
     const scopeSet = new Set<Scope>();
     traverse(property, {
       ThisExpression: (path: NodePath) => {
+        this.markDestructThisExpression(path)
         if (!scopeSet.has(path.scope)) {
           scopeSet.add(path.scope);
           this.markScope(path.scope, true, '', true);
@@ -380,6 +381,7 @@ export class ScriptProcessor {
     const name = ast.key.name;
     traverse(ast, {
       ThisExpression: (path: NodePath) => {
+        this.markDestructThisExpression(path, false, used, name);
         if (!scopeSet.has(path.scope)) {
           scopeSet.add(path.scope);
           this.markScope(path.scope, used, name);
@@ -520,6 +522,30 @@ export class ScriptProcessor {
           this.markObjectMethodIdentifier(property, false);
         }
       }
+    }
+  }
+  // 标记 VariableDeclarator 当 左值是一个objectPattern 当右值是ThisExpression
+  markDestructThisExpression(path: NodePath, effect = true, used = false, name = '') {
+    if (
+      path.parent.type === 'VariableDeclarator' &&
+      path.parent.id.type === 'ObjectPattern'
+    ) {
+      let objectPattern = path.parent.id;
+      objectPattern.properties.forEach(property => {
+        if (isObjectProperty(property)) {
+          if (
+            isIdentifier(property.key) &&
+            !this.usedTokenSet.has(property.key.name)
+          ) {
+            // this.markThisExpression(property.key.name, true, name)
+            if (effect) {
+              this.unFoundNodeMap.set(property.key.name, null);
+            } else {
+              this.markThisExpression(property.key.name, used, name);
+            }
+          }
+        }
+      });
     }
   }
 }
