@@ -1,6 +1,6 @@
 import { parseTemplate } from './parse/template';
 import { ScriptProcessor } from './parse/script';
-export interface IDetectOptions {
+export interface DetectOptions {
   nuxt: boolean;
 }
 export {
@@ -28,7 +28,7 @@ export {
  */
 export function unusedToken(
   sourcode: string,
-  options: IDetectOptions = { nuxt: false }
+  options: DetectOptions = { nuxt: false }
 ) {
   const tokenList = parseTemplate(sourcode);
   const sp = new ScriptProcessor(tokenList, sourcode, options);

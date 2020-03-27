@@ -16,7 +16,8 @@
     "postcompile": "npm run cp",
     "precompile": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
-    "prebuild": "rimraf dist"
+    "prebuild": "rimraf dist",
+    "lint": "eslint . --ext .ts --fix"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,10 @@
     "@types/rollup-plugin-json": "^3.0.2",
     "@types/typescript": "^2.0.0",
     "@types/vue": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.25.0",
+    "eslint": "^6.8.0",
+    "husky": "^4.2.3",
     "jest": "^24.9.0",
     "lodash.camelcase": "^4.3.0",
     "rimraf": "^3.0.0",

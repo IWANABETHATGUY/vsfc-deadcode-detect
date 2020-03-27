@@ -9,25 +9,28 @@ import {
   Identifier,
 } from '@babel/types';
 
-// const code2 = ` ({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
-export function getTemplateStatementVariable(code: string): string[] {
-  try {
-    return getVariable(preProcessCode(code));
-  } catch {
-    console.log(code);
-    return [];
-  }
-}
-
 function preProcessCode(code: string): Node {
   let normalizeCode = code.trim();
   let ast: Node;
   if (normalizeCode.startsWith('{')) {
     normalizeCode = `(${normalizeCode})`;
   }
+  // eslint-disable-next-line prefer-const
   ast = parser.parse(normalizeCode);
   return ast;
 }
+
+// TODO: 这个改动有待观察
+function notFirstLevelIdentifier(cur: Identifier, parent: Node) {
+  return (
+    (isObjectProperty(parent) && parent.key === cur && !parent.computed) ||
+    (isMemberExpression(parent) &&
+      cur === parent.property &&
+      !parent.computed &&
+      !isThisExpression(parent.object))
+  );
+}
+
 
 export function getVariable(ast: Node): string[] {
   const result: string[] = [];
@@ -76,13 +79,17 @@ export function getVariable(ast: Node): string[] {
   }
   return [...new Set(result)];
 }
-// TODO: 这个改动有待观察
-function notFirstLevelIdentifier(cur: Identifier, parent: Node) {
-  return (
-    (isObjectProperty(parent) && parent.key === cur && !parent.computed) ||
-    (isMemberExpression(parent) &&
-      cur === parent.property &&
-      !parent.computed &&
-      !isThisExpression(parent.object))
-  );
+
+// const code2 = ` ({a: item.number_won === 0, b: !(item.number_won === 0 && item.success_clock_in === 1 && fuck)})`;
+export function getTemplateStatementVariable(code: string): string[] {
+  try {
+    return getVariable(preProcessCode(code));
+  } catch {
+    console.log(code);
+    return [];
+  }
 }
+
+
+
+

@@ -4,7 +4,7 @@ import { getTemplateStatementVariable } from './templateStatement';
 
 export function parseTemplate(code: string): string[] {
   const reg = /<template>([\s\S]+)<\/template>/;
-  let regExec: RegExpExecArray = reg.exec(code);
+  const regExec: RegExpExecArray = reg.exec(code);
   let template = '';
   if (regExec) {
     template = regExec[1];

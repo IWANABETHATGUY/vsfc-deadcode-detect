@@ -83,7 +83,7 @@ describe('测试默认导出js部分与template 依赖关系', () => {
       expect(dataMethod).not.toBe(null);
       expect(dataMethod.type === 'ObjectMethod').toBeTruthy();
       const list = parseData(dataMethod as ObjectMethod);
-      const nameList = list.map(item => (<Identifier>item.key).name);
+      const nameList = list.map(item => (item.key as Identifier).name);
       expect(list.length).toEqual(7);
       expect(nameList.sort()).toEqual(
         [

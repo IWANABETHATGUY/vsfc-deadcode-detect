@@ -7,7 +7,7 @@ export function traverseTemplateAst(
     return [];
   }
   let result: Array<{}> = [];
-  let children = node.children;
+  const children = node.children;
 
   if (node.alias) {
     scope.push(node.alias);
@@ -17,9 +17,9 @@ export function traverseTemplateAst(
   }
   if (node.attrsMap) {
     const attrsMap: { [prop: string]: any } = {};
-    let keys = Object.keys(node.attrsMap);
+    const keys = Object.keys(node.attrsMap);
     for (let i = 0; i < keys.length; i++) {
-      let key = keys[i];
+      const key = keys[i];
       if (key.startsWith(':') || key.startsWith('v-') || key.startsWith('@')) {
         if (key === 'v-for') {
           attrsMap[key] = [node.for, node.alias, node.iterator1].filter(Boolean).join(',');
@@ -49,14 +49,14 @@ export function traverseTemplateAst(
   }
 
   if (children && children.length) {
-    let len = children.length;
+    const len = children.length;
     for (let i = 0; i < len; i++) {
       result = result.concat(traverseTemplateAst(children[i], [...scope]));
     }
   }
   if (node.ifConditions) {
     const ifConditions = node.ifConditions;
-    for (let condition of ifConditions) {
+    for (const condition of ifConditions) {
       if (node !== condition.block) {
         result = result.concat(
           traverseTemplateAst(condition.block, [...scope])

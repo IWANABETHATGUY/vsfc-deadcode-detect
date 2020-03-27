@@ -1,6 +1,6 @@
 import traverse, { NodePath, Node, Scope } from '@babel/traverse';
 import { parse } from '@babel/parser';
-import { IDetectOptions } from '../index';
+import { DetectOptions } from '../index';
 import {
   ObjectMethod,
   ObjectExpression,
@@ -26,7 +26,7 @@ import {
 } from '@babel/types';
 import { isLifeCircleFunction, isNuxtConfigFunction } from '../util/parse';
 
-export interface INodeDescription {
+export interface NodeDescription {
   name: string;
   start: number;
   end: number;
@@ -121,7 +121,7 @@ export function parseWatch(
 export function preProcess(
   script: string
 ): [ObjectExpression | null, number, number] {
-  const regex = /\<script\>([\s\S]+)\<\/script\>/;
+  const regex = /<script>([\s\S]+)<\/script>/;
   let content: string = script;
   let offset = 8;
   let ret: RegExpExecArray;
@@ -129,7 +129,7 @@ export function preProcess(
     content = ret[1];
     offset += ret.index;
   }
-  let line = script.slice(0, offset).split('\n').length - 1;
+  const line = script.slice(0, offset).split('\n').length - 1;
   try {
     const ast = parse(content, { sourceType: 'module' });
     let objectExpression: ObjectExpression;
@@ -165,7 +165,7 @@ export class ScriptProcessor {
   constructor(
     usedTokens: string[],
     sourceCode: string,
-    options: IDetectOptions = { nuxt: false }
+    options: DetectOptions = { nuxt: false }
   ) {
     this.usedNodeMap = new Map<string, Node>();
     this.unusedNodeMap = new Map<
@@ -180,13 +180,13 @@ export class ScriptProcessor {
     this.process(ast, options.nuxt);
   }
 
-  getUnusedNodeMap() {
+  getUnusedNodeMap(): Map<string, ObjectProperty | ObjectMethod | StringLiteral> {
     return this.unusedNodeMap;
   }
 
-  getUnusedNodeDesc(): INodeDescription[] {
+  getUnusedNodeDesc(): NodeDescription[] {
     const offset = this.offset;
-    const descriptionList: INodeDescription[] = [];
+    const descriptionList: NodeDescription[] = [];
     this.unusedNodeMap.forEach((node, key) => {
       descriptionList.push({
         start: node.start + offset,
@@ -216,7 +216,7 @@ export class ScriptProcessor {
   process(ast: ObjectExpression, nuxt: boolean) {
     if (ast === null) {
       console.warn(`parse error`);
-      return [];
+      return;
     }
     ast.properties.forEach(property => {
       if (
@@ -274,7 +274,7 @@ export class ScriptProcessor {
             this.usedNodeMap.set(key, unusedNode);
             flag = true;
           } else {
-            for (let nodeName of set) {
+            for (const nodeName of set) {
               if (this.usedNodeMap.has(nodeName)) {
                 const unusedNode = this.unusedNodeMap.get(key);
                 this.unusedNodeMap.delete(key);
@@ -322,7 +322,7 @@ export class ScriptProcessor {
     const scopeSet = new Set<Scope>();
     traverse(property, {
       ThisExpression: (path: NodePath) => {
-        this.markDestructThisExpression(path)
+        this.markDestructThisExpression(path);
         if (!scopeSet.has(path.scope)) {
           scopeSet.add(path.scope);
           this.markScope(path.scope, true, '', true);
@@ -419,7 +419,7 @@ export class ScriptProcessor {
     scope: Scope,
     used: boolean,
     key: string,
-    ignoreCondition: boolean = false
+    ignoreCondition = false
   ) {
     const bindings = scope.bindings;
     Object.keys(bindings).forEach(bindingkey => {
@@ -525,12 +525,17 @@ export class ScriptProcessor {
     }
   }
   // 标记 VariableDeclarator 当 左值是一个objectPattern 当右值是ThisExpression
-  markDestructThisExpression(path: NodePath, effect = true, used = false, name = '') {
+  markDestructThisExpression(
+    path: NodePath,
+    effect = true,
+    used = false,
+    name = ''
+  ) {
     if (
       path.parent.type === 'VariableDeclarator' &&
       path.parent.id.type === 'ObjectPattern'
     ) {
-      let objectPattern = path.parent.id;
+      const objectPattern = path.parent.id;
       objectPattern.properties.forEach(property => {
         if (isObjectProperty(property)) {
           if (
