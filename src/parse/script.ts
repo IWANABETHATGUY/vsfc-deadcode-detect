@@ -180,7 +180,10 @@ export class ScriptProcessor {
     this.process(ast, options.nuxt);
   }
 
-  getUnusedNodeMap(): Map<string, ObjectProperty | ObjectMethod | StringLiteral> {
+  getUnusedNodeMap(): Map<
+    string,
+    ObjectProperty | ObjectMethod | StringLiteral
+  > {
     return this.unusedNodeMap;
   }
 
@@ -218,7 +221,7 @@ export class ScriptProcessor {
       console.warn(`parse error`);
       return;
     }
-    ast.properties.forEach(property => {
+    ast.properties.forEach((property) => {
       if (
         (isObjectMethod(property) || isObjectProperty(property)) &&
         isIdentifier(property.key)
@@ -345,7 +348,7 @@ export class ScriptProcessor {
       return;
     }
     const properties = parseMethods(ast.value);
-    properties.forEach(property => {
+    properties.forEach((property) => {
       if (!isSpreadElement(property)) {
         let used = false;
         if (isIdentifier(property.key)) {
@@ -415,17 +418,12 @@ export class ScriptProcessor {
       this.markThisExpression(property.name, used, name);
     }
   }
-  markScope(
-    scope: Scope,
-    used: boolean,
-    key: string,
-    ignoreCondition = false
-  ) {
+  markScope(scope: Scope, used: boolean, key: string, ignoreCondition = false) {
     const bindings = scope.bindings;
-    Object.keys(bindings).forEach(bindingkey => {
+    Object.keys(bindings).forEach((bindingkey) => {
       const node = bindings[bindingkey].path.node;
       if (isVariableDeclarator(node) && isThisExpression(node.init)) {
-        bindings[bindingkey].referencePaths.forEach(refPath => {
+        bindings[bindingkey].referencePaths.forEach((refPath) => {
           const refNode = refPath.node;
           const refParent = refPath.parent;
           if (isIdentifier(refNode) && isMemberExpression(refParent)) {
@@ -493,7 +491,7 @@ export class ScriptProcessor {
   }
 
   markArrayExpression(array: ArrayExpression) {
-    array.elements.forEach(item => {
+    array.elements.forEach((item) => {
       if (isStringLiteral(item)) {
         if (this.usedTokenSet.has(item.value)) {
           this.usedNodeMap.set(item.value, item);
@@ -536,7 +534,7 @@ export class ScriptProcessor {
       path.parent.id.type === 'ObjectPattern'
     ) {
       const objectPattern = path.parent.id;
-      objectPattern.properties.forEach(property => {
+      objectPattern.properties.forEach((property) => {
         if (isObjectProperty(property)) {
           if (
             isIdentifier(property.key) &&
