@@ -58,7 +58,7 @@ describe('测试解析script标签内容', () => {
 
     test('single file component', () => {
       const template = fs.readFileSync(
-        path.resolve(__dirname, './script.test.vue')
+        path.resolve(__dirname, './__fixture__/script.test.vue')
       );
       const file = template.toString();
 
@@ -72,7 +72,7 @@ describe('测试解析script标签内容', () => {
 });
 
 describe('测试默认导出js部分与template 依赖关系', () => {
-  const file = fs.readFileSync(path.resolve(__dirname, './script.test.vue'));
+  const file = fs.readFileSync(path.resolve(__dirname, './__fixture__/script.test.vue'));
   const template = file.toString();
   const [ast] = preProcess(template);
 
@@ -136,20 +136,20 @@ describe('测试默认导出js部分与template 依赖关系', () => {
 
   describe('测试单文件deadcode 分析', () => {
     const file = fs.readFileSync(
-      path.resolve(__dirname, './eletemplate.test.vue')
+      path.resolve(__dirname, './__fixture__/eletemplate.test.vue')
     );
     const template = file.toString();
     isTwoSortedArrayEqual(unusedToken(template), []);
   });
 
   describe('测试简单的作用域分析', () => {
-    const file = fs.readFileSync(path.resolve(__dirname, './scope.test.vue'));
+    const file = fs.readFileSync(path.resolve(__dirname, './__fixture__/scope.test.vue'));
     const template = file.toString();
     isTwoSortedArrayEqual(unusedToken(template), []);
   })
   
   describe('测试 在函数中结构 this aka Vue instaance', () => {
-    const file = fs.readFileSync(path.resolve(__dirname, './destruct.test.vue'));
+    const file = fs.readFileSync(path.resolve(__dirname, './__fixture__/destruct.test.vue'));
     const template = file.toString();
     isTwoSortedArrayEqual(unusedToken(template).map(desc => desc.name), ['th']);
   })

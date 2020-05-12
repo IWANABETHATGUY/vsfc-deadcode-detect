@@ -4,7 +4,7 @@ import * as path from 'path';
 describe('测试模板提取变量', () => {
   test('vue single file component', () => {
     const template = fs.readFileSync(
-      path.resolve(__dirname, './template.test.vue')
+      path.resolve(__dirname, './__fixture__/template.test.vue')
     );
     const file = template.toString();
     expect(parseTemplate(file).sort()).toEqual(
@@ -26,7 +26,7 @@ describe('测试模板提取变量', () => {
 
   test('sfc with component import', () => {
     const template = fs.readFileSync(
-      path.resolve(__dirname, './templateWithComponent.test.vue')
+      path.resolve(__dirname, './__fixture__/templateWithComponent.test.vue')
     );
     const file = template.toString();
     expect(parseTemplate(file).sort()).toEqual(

@@ -25,7 +25,7 @@ export function parseTemplate(code: string): string[] {
       }, []);
       tokenList.push(...temTokenList);
     } catch (err) {
-      console.log(attrMap);
+      console.warn(attrMap);
     }
   }
   return [...new Set(tokenList)];
