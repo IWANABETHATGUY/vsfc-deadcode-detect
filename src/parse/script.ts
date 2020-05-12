@@ -23,6 +23,8 @@ import {
   isThisExpression,
   isVariableDeclarator,
   MemberExpression,
+  ThisExpression,
+  CallExpression,
 } from '@babel/types';
 import { isLifeCircleFunction, isNuxtConfigFunction } from '../util/parse';
 
@@ -324,19 +326,23 @@ export class ScriptProcessor {
   processEffectMethod(property: ObjectMethod | FunctionExpression) {
     const scopeSet = new Set<Scope>();
     traverse(property, {
-      ThisExpression: (path: NodePath) => {
+      ThisExpression: (path: NodePath<ThisExpression>) => {
         this.markDestructThisExpression(path);
         if (!scopeSet.has(path.scope)) {
           scopeSet.add(path.scope);
           this.markScope(path.scope, true, '', true);
         }
-        const parent = path.parent;
-        if (!isMemberExpression(parent)) {
+        const parentPath = path.parentPath;
+        if (!parentPath.isMemberExpression()) {
           return;
         }
-        const node = parent.property;
+
+        const node = parentPath.node.property;
+
         if (isIdentifier(node)) {
-          this.unFoundNodeMap.set(node.name, null);
+          this.markThisExpression(node.name, true, '', parentPath);
+        } else if (isStringLiteral(node)) {
+          this.markThisExpression(node.value, true, '', parentPath);
         }
       },
       noScope: true,
@@ -383,14 +389,14 @@ export class ScriptProcessor {
     const scopeSet = new Set<Scope>();
     const name = ast.key.name;
     traverse(ast, {
-      ThisExpression: (path: NodePath) => {
+      ThisExpression: (path: NodePath<ThisExpression>) => {
         this.markDestructThisExpression(path, false, used, name);
         if (!scopeSet.has(path.scope)) {
           scopeSet.add(path.scope);
           this.markScope(path.scope, used, name);
         }
-        const parent = path.parent;
-        if (!isMemberExpression(parent)) {
+        const parent = path.parentPath;
+        if (!parent.isMemberExpression()) {
           return;
         }
         this.markMemberExpression(parent, used, name);
@@ -409,13 +415,17 @@ export class ScriptProcessor {
    *
    * @memberOf ScriptProcessor
    */
-  markMemberExpression(parent: MemberExpression, used: boolean, name: string) {
-    const property = parent.property;
-    const computed = parent.computed;
+  markMemberExpression(
+    parent: NodePath<MemberExpression>,
+    used: boolean,
+    name: string
+  ) {
+    const property = parent.node.property;
+    const computed = parent.node.computed;
     if (isStringLiteral(property)) {
-      this.markThisExpression(property.value, used, name);
+      this.markThisExpression(property.value, used, name, parent);
     } else if (isIdentifier(property) && !computed) {
-      this.markThisExpression(property.name, used, name);
+      this.markThisExpression(property.name, used, name, parent);
     }
   }
   markScope(scope: Scope, used: boolean, key: string, ignoreCondition = false) {
@@ -426,6 +436,9 @@ export class ScriptProcessor {
         bindings[bindingkey].referencePaths.forEach((refPath) => {
           const refNode = refPath.node;
           const refParent = refPath.parent;
+          const refParentPath = refPath.parentPath as NodePath<
+            MemberExpression
+          >;
           if (isIdentifier(refNode) && isMemberExpression(refParent)) {
             if (ignoreCondition) {
               if (isStringLiteral(refParent.property)) {
@@ -437,7 +450,7 @@ export class ScriptProcessor {
                 this.unFoundNodeMap.set(refParent.property.name, null);
               }
             } else {
-              this.markMemberExpression(refParent, used, key);
+              this.markMemberExpression(refParentPath, used, key);
             }
             // const property = refPath.parent.property;
             // const computed = refPath.parent.computed;
@@ -457,14 +470,39 @@ export class ScriptProcessor {
    * @param {string} name 代表MemberExpression 中的property是 Stringliteral 或者Identifier 时的值
    * @param {boolean} used
    * @param {string} key 代表指向该 变量 的ObjectExpression 或者ObjectMethod 的key.name
-   *
+   * @param {MemberExpression} parent ThisExpression 的parent 也就是 MemberExpression
    * @memberOf ScriptProcessor
    */
-  markThisExpression(name: string, used: boolean, key: string) {
-    if (used && this.unusedNodeMap.has(name)) {
-      const unusedNode = this.unusedNodeMap.get(name);
-      this.unusedNodeMap.delete(name);
-      this.usedNodeMap.set(name, unusedNode);
+  markThisExpression(
+    name: string,
+    used: boolean,
+    key: string,
+    parent: NodePath<MemberExpression>
+  ) {
+    if (name === '$emit' && parent && parent.parentPath.isCallExpression()) {
+      const callExpression: CallExpression = parent.parentPath.node;
+      if (
+        callExpression.arguments.length &&
+        callExpression.arguments[0].type === 'StringLiteral'
+      ) {
+        const value = callExpression.arguments[0].value;
+        const matches = /update:(.*)/.exec(value);
+        if (!matches) {
+          return;
+        }
+
+        this.unFoundNodeMap.set(matches[1], null);
+      }
+      return;
+    }
+    if (used) {
+      if (key === '') {
+        this.unFoundNodeMap.set(name, null);
+      } else if (this.unusedNodeMap.has(name)) {
+        const unusedNode = this.unusedNodeMap.get(name);
+        this.unusedNodeMap.delete(name);
+        this.usedNodeMap.set(name, unusedNode);
+      }
     } else {
       if (this.unFoundNodeMap.has(name)) {
         const set = this.unFoundNodeMap.get(name);
@@ -524,7 +562,7 @@ export class ScriptProcessor {
   }
   // 标记 VariableDeclarator 当 左值是一个objectPattern 当右值是ThisExpression
   markDestructThisExpression(
-    path: NodePath,
+    path: NodePath<ThisExpression>,
     effect = true,
     used = false,
     name = ''
@@ -544,7 +582,7 @@ export class ScriptProcessor {
             if (effect) {
               this.unFoundNodeMap.set(property.key.name, null);
             } else {
-              this.markThisExpression(property.key.name, used, name);
+              this.markThisExpression(property.key.name, used, name, null);
             }
           }
         }
