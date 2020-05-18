@@ -1,6 +1,6 @@
 {
   "name": "vscf-deadcode-detect",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "a repo to detect vue single file component dead code",
   "main": "dist/index.js",
   "module": "dist/index.es6.js",
