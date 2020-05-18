@@ -9,6 +9,7 @@ const template = fs.readFileSync(path.resolve(__dirname, './template.test/destru
 const file = template.toString();
 console.time('template');
 const tokenList = parseTemplate(file);
+console.log(tokenList);
 console.timeEnd('template');
 console.time('script');
 const sp = new ScriptProcessor(tokenList, file);

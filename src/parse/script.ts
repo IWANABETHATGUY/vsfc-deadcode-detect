@@ -499,11 +499,14 @@ export class ScriptProcessor {
       if (key === '') {
         this.unFoundNodeMap.set(name, null);
       } else if (this.unusedNodeMap.has(name)) {
-        const unusedNode = this.unusedNodeMap.get(name);
         this.unusedNodeMap.delete(name);
-        this.usedNodeMap.set(name, unusedNode);
       }
+      const unusedNode = this.unusedNodeMap.get(name);
+      this.usedNodeMap.set(name, unusedNode);
     } else {
+      if (this.usedNodeMap.get(name)) {
+        return;
+      }
       if (this.unFoundNodeMap.has(name)) {
         const set = this.unFoundNodeMap.get(name);
         if (set) {
