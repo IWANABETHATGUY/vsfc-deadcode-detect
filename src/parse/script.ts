@@ -66,8 +66,8 @@ export function parseData(
           property.type === 'ObjectProperty'
         ) {
           pre.push(property);
-          return pre;
         }
+        return pre;
       },
       []
     );
@@ -79,8 +79,8 @@ export function parseProps(ast: ObjectExpression): Array<ObjectProperty> {
   return ast.properties.reduce((pre: Array<ObjectProperty>, property) => {
     if (property.type === 'ObjectProperty') {
       pre.push(property);
-      return pre;
     }
+    return pre;
   }, []);
 }
 
@@ -430,10 +430,10 @@ export class ScriptProcessor {
   }
   markScope(scope: Scope, used: boolean, key: string, ignoreCondition = false) {
     const bindings = scope.bindings;
-    Object.keys(bindings).forEach((bindingkey) => {
-      const node = bindings[bindingkey].path.node;
+    Object.keys(bindings).forEach((bindingKey) => {
+      const node = bindings[bindingKey].path.node;
       if (isVariableDeclarator(node) && isThisExpression(node.init)) {
-        bindings[bindingkey].referencePaths.forEach((refPath) => {
+        bindings[bindingKey].referencePaths.forEach((refPath) => {
           const refNode = refPath.node;
           const refParent = refPath.parent;
           const refParentPath = refPath.parentPath as NodePath<
@@ -467,7 +467,7 @@ export class ScriptProcessor {
   /**
    *
    *
-   * @param {string} name 代表MemberExpression 中的property是 Stringliteral 或者Identifier 时的值
+   * @param {string} name 代表MemberExpression 中的property是 StringLiteral 或者Identifier 时的值
    * @param {boolean} used
    * @param {string} key 代表指向该 变量 的ObjectExpression 或者ObjectMethod 的key.name
    * @param {MemberExpression} parent ThisExpression 的parent 也就是 MemberExpression

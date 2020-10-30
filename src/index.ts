@@ -23,14 +23,14 @@ export {
  * 获取当前单文件应用的未使用token 以及相应的描述
  *
  * @export
- * @param {string} sourcode
+ * @param {string} sourceCode
  * @returns
  */
 export function unusedToken(
-  sourcode: string,
+  sourceCode: string,
   options: DetectOptions = { nuxt: false }
 ) {
-  const tokenList = parseTemplate(sourcode);
-  const sp = new ScriptProcessor(tokenList, sourcode, options);
+  const tokenList = parseTemplate(sourceCode);
+  const sp = new ScriptProcessor(tokenList, sourceCode, options);
   return sp.getUnusedNodeDesc();
 }
