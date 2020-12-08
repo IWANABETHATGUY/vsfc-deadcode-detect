@@ -131,6 +131,10 @@ export function preProcess(
     content = ret[1];
     offset += ret.index;
   }
+  // if there is no script in .vue file
+  if (!content) {
+    return [null, 0, 0];
+  }
   const line = script.slice(0, offset).split('\n').length - 1;
   try {
     const ast = parse(content, { sourceType: 'module' });
@@ -220,7 +224,7 @@ export class ScriptProcessor {
 
   process(ast: ObjectExpression, nuxt: boolean) {
     if (ast === null) {
-      console.warn(`parse error`);
+      // console.warn(`parse error`);
       return;
     }
     ast.properties.forEach((property) => {

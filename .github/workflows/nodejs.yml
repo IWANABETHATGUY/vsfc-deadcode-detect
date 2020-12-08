@@ -1,6 +1,6 @@
 name: Node CI
 
-on: [push]
+on: [push, pull-request]
 
 jobs:
   build:
@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [10.x, 12.x, 14.x]
 
     steps:
     - uses: actions/checkout@v1
@@ -19,8 +19,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: npm install, build, and test
       run: |
-        npm i yarn -g
-        yarn
+        npm ci
         npm test
       env:
         CI: true

@@ -12,7 +12,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     }
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -27,7 +27,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -46,7 +46,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -66,7 +66,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -82,7 +82,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
           };
         </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -97,7 +97,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -112,7 +112,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -131,7 +131,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -150,7 +150,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     }
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -170,7 +170,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -189,7 +189,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -208,7 +208,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -227,7 +227,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -246,7 +246,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -265,7 +265,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -284,7 +284,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -303,7 +303,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -322,7 +322,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     }
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -344,7 +344,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     }
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -363,7 +363,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     }
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -381,7 +381,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -399,7 +399,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -431,7 +431,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -450,7 +450,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     }
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       []
     );
   });
@@ -465,7 +465,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       ['count']
     );
   });
@@ -484,7 +484,7 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       ['count']
     );
   });
@@ -503,8 +503,19 @@ describe('使用官方eslint-vue-plugin 测试样例', () => {
     };
   </script>`;
     isTwoSortedArrayEqual(
-      unusedToken(code).map(item => item.name),
+      unusedToken(code).map((item) => item.name),
       ['count']
+    );
+  });
+// won't emit any error, if the script is empty 
+  test('only template', () => {
+    const code = `
+<template>
+    <div>{{ count }}</div>
+  </template>`;
+    isTwoSortedArrayEqual(
+      unusedToken(code).map((item) => item.name),
+      []
     );
   });
 });
